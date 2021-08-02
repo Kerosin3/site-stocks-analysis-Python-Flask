@@ -9,3 +9,9 @@ stocks_main_views = Blueprint("stocks_main_views",
 @stocks_main_views.route("/indexes/", methods=["GET"],endpoint='indexes')
 def indexes_dynamics():
     return render_template('indexes.html')
+
+
+@stocks_main_views.route("/add_stock/", methods=["GET","POST"],endpoint='add_stock')
+def add_stock():
+
+    return render_template('indexes.html')

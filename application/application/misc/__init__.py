@@ -1,0 +1,1 @@
+from .stocks_getter import get_data_historical,get_lastday_data

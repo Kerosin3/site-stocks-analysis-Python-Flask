@@ -6,12 +6,78 @@
 
 
 {% block body %}
-    <h1> Indexes page</h1>
-<!--    <div>-->
-<!--        <h1>add new product</h1>-->
-<!--        <form method="post">-->
-<!--            <label for="input-stock-name"></label>-->
-<!--            <input id="input-stock-name" type="text">-->
-<!--        </form>-->
 
+    <h2> Some test shit</h2>
+    <h2>Section title</h2>
+    <div class="table-responsive">
+        <table class="table table-striped table-sm">
+            <thead>
+            <tr>
+                <th scope="col">№</th>
+                <th scope="col">ticker</th>
+                <th scope="col">last day close</th>
+                <th scope="col">price change</th>
+                <th scope="col">volume change</th>
+                <th scope="col">Header</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>1</td>
+                <td>S&P500</td>
+                <td>data</td>
+                <td>placeholder</td>
+                <td>text</td>
+                <td>text</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>NADAQ</td>
+                <td>NADAQ</td>
+                <td>DOWJONES</td>
+                <td>RUSSEL2000</td>
+                <td>RUSSEL2000</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>DOWJONES</td>
+                <td>rich</td>
+                <td>dashboard</td>
+                <td>tabular</td>
+                <td>tabular</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>RUSSEL2000</td>
+                <td>placeholder</td>
+                <td>illustrative</td>
+                <td>data</td>
+                <td>data</td>
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+    {% block body2 %}
+    <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+    {#        <form method="post">#}
+    {#            <label for="input-stock-name"></label>#}
+    {#            <input id="input-stock-name" type="text">#}
+    {#        </form>#}
+    {#    <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>#}
+
+    <!--    <div>-->
+    <!--        <h1>add new product</h1>-->
+    <!--        <form method="post">-->
+    <!--            <label for="input-stock-name"></label>-->
+    <!--            <input id="input-stock-name" type="text">-->
+    <!--        </form>-->
+        <ul>
+      {% for index in indexes %}
+        <li> index №{{ loop.index }}, ticker: {{ index }}</li>
+      {% endfor %}
+
+    </ul>
+        {% endblock %}
 {% endblock %}
