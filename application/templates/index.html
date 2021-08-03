@@ -6,78 +6,110 @@
 
 
 {% block body %}
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        {#            <br>#}
+        <h1 class="h2">Dashboard</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                Add index to tracking
+            </button>
 
-    <h2> Some test shit</h2>
-    <h2>Section title</h2>
-    <div class="table-responsive">
-        <table class="table table-striped table-sm">
-            <thead>
-            <tr>
-                <th scope="col">№</th>
-                <th scope="col">ticker</th>
-                <th scope="col">last day close</th>
-                <th scope="col">price change</th>
-                <th scope="col">volume change</th>
-                <th scope="col">Header</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>1</td>
-                <td>S&P500</td>
-                <td>data</td>
-                <td>placeholder</td>
-                <td>text</td>
-                <td>text</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>NADAQ</td>
-                <td>NADAQ</td>
-                <td>DOWJONES</td>
-                <td>RUSSEL2000</td>
-                <td>RUSSEL2000</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>DOWJONES</td>
-                <td>rich</td>
-                <td>dashboard</td>
-                <td>tabular</td>
-                <td>tabular</td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>RUSSEL2000</td>
-                <td>placeholder</td>
-                <td>illustrative</td>
-                <td>data</td>
-                <td>data</td>
-            </tr>
-
-            </tbody>
-        </table>
+            <!-- Modal -->
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                 aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Index tracker</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Please enter index ticker
+                            <form method="post">
+                                <label for="stock_ticker">Index ticker:</label>
+                                <input
+                                        id="stock_ticker_input"
+                                        name="index_ticker"
+                                        type="text"
+                                        minlength="3"
+                                        maxlength="4"
+                                        placeholder="NVDA"
+                                        required
+                                >
+                                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Add</button>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {#            <div class="btn-group me-2">#}
+            {#                <button type="button" class="btn btn-sm btn-outline-secondary">Add index</button>#}
+            {#                <button type="button" class="btn btn-sm btn-outline-secondary">Remove Index</button>#}
+            {#            </div>#}
+            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+                <span data-feather="calendar"></span>
+                This week
+            </button>
+        </div>
     </div>
 
+    <h2> Here you can see top index today dynamics</h2>
+    {#    <h2>Section title</h2>#}
+    <div class="table-responsive">
+
+
+    <table class="table table-striped table-sm">
+        <thead>
+        <tr>
+            <th scope="col">№</th>
+            <th scope="col">ticker</th>
+            <th scope="col">current index</th>
+            <th scope="col">last day close</th>
+            <th scope="col">price change</th>
+            <th scope="col">volume change</th>
+            <th scope="col">Header</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for ticker,value in indexes.items() %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ ticker }}</td>
+                <td>{{ value[0][0] }}</td>
+                <td>{{ value[1] }}</td>
+                <td>{{ value[0][1] }}</td>
+                <td>text</td>
+                <td>text</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
     {% block body2 %}
-    <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
-    {#        <form method="post">#}
-    {#            <label for="input-stock-name"></label>#}
-    {#            <input id="input-stock-name" type="text">#}
-    {#        </form>#}
-    {#    <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>#}
+        <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+        {#        <form method="post">#}
+        {#            <label for="input-stock-name"></label>#}
+        {#            <input id="input-stock-name" type="text">#}
+        {#        </form>#}
+        {#    <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>#}
 
-    <!--    <div>-->
-    <!--        <h1>add new product</h1>-->
-    <!--        <form method="post">-->
-    <!--            <label for="input-stock-name"></label>-->
-    <!--            <input id="input-stock-name" type="text">-->
-    <!--        </form>-->
+        <!--    <div>-->
+        <!--        <h1>add new product</h1>-->
+        <!--        <form method="post">-->
+        <!--            <label for="input-stock-name"></label>-->
+        <!--            <input id="input-stock-name" type="text">-->
+        <!--        </form>-->
         <ul>
-      {% for index in indexes %}
-        <li> index №{{ loop.index }}, ticker: {{ index }}</li>
-      {% endfor %}
-
-    </ul>
-        {% endblock %}
+            {% for index in indexes %}
+                <li> index №{{ loop.index }}, ticker: {{ index }}</li>
+            {% endfor %}
+            <span>You have {{ indexes|length }} stocks</span>
+        </ul>
+    {% endblock %}
 {% endblock %}
