@@ -17,10 +17,23 @@ def add_stock():
 
     return render_template('indexes.html')
 
-@stocks_main_views.route("/get_index_price/", methods=["GET"],endpoint='get_index_price')
-def get_today_price_url(ticker:str):
+# @stocks_main_views.route("/get_index_price/<string:stock_ticker>/",methods=["GET"])
+# def get_index(stock_ticker):
+#     ticker = 'TSLA'
+#     price = application.misc.stocks_getter.get_today_price(ticker)
+#     return jsonify(
+#         ticker=ticker,
+#         price=price
+#     )
+#endpoint='get_index_price
+#https://www.tutorialsteacher.com/jquery/jquery-ajax-method
+@stocks_main_views.route("/get_index_price/", methods=["GET"])
+def get_today_price_url():
+    ticker = request.args.get('ticker')
     price = application.misc.stocks_getter.get_today_price(ticker)
     return jsonify(
         ticker=ticker,
         price=price
     )
+
+
