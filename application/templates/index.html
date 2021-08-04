@@ -69,39 +69,83 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-        var ticker0 = 'NVDA'
-        var price_out = 0;
-        let ticker_out = '';
-        $(document).ready(function () {
-            $.ajax({
-                dataType: "json",
-                url: "/stocks/get_index_price/",
-                data: 'ticker=' + ticker0,
-                success: function (result) {
-                    {#alert(result.ticker + ' \t' + result.price)#}
-                    price_out = result.price
-                    ticker_out = result.ticker
-                    ticker0 = 'SOMETHING'
-                    document.getElementById('index_ticker').innerHTML = ticker_out;
-                    document.getElementById('index_indicator').innerHTML = price_out;
-                    document.getElementById('index_indicator_first').innerHTML = ticker0;
-                },
-                error: function () {
-                    alert('Error occured');
-                }
+        function set_form(id, value) {
+            document.getElementById(id).innerHTML = value;
+            return true
+        }
+
+        function get_data(ticker0, index_ticker_form, index_indicator_form) {
+            var price_out = 0;
+            let ticker_out = '';
+            $(document).ready(function () {
+                $.ajax({
+                    dataType: "json",
+                    {#TODAY PRICE#}
+                    url: "/stocks/get_index_price/",
+                    data: 'ticker=' + ticker0,
+                    success: function (result) {
+                        {#alert(result.ticker + ' \t' + result.price)#}
+                        price_out = result.price
+                        ticker_out = result.ticker
+                        set_form(index_ticker_form, ticker_out)
+                        set_form(index_indicator_form, price_out)
+                    },
+                    error: function () {
+                        alert('Error occured');
+                    }
+                });
             });
-        });
+        }
+
+        {#index_data = get_data(#}
+        {#    'ADBE',#}
+        {#    'index_ticker',#}
+        {#    'index_indicator')#}
+
+        {#document.getElementById('index_ticker').innerHTML = index_data[1];#}
+        {#document.getElementById('index_indicator').innerHTML = index_data[0];#}
     </script>
     {#  https://stackoverflow.com/questions/3302702/jquery-return-value-using-ajax-result-on-success    #}
-    <script>
-        window.onload = function () {
-            document.getElementById('index_ticker').innerHTML = 1111;
-            document.getElementById('index_indicator').innerHTML = price_out;
-            document.getElementById('index_indicator_first').innerHTML = ticker0;
-        };
 
-    </script>
 
+
+
+{#            <script>#}
+{#                var i = {{i|tojson}};#}
+{#                var ticker_j = {{ticker_j|tojson}};#}
+{#                function set_form(id, value) {#}
+{#                    document.getElementById(id).innerHTML = value;#}
+{#                    return true#}
+{#                }#}
+{##}
+{#                function get_data(ticker0, index_indicator_form) {#}
+{#                    var price_out = 0;#}
+{#                    let ticker_out = '';#}
+{#                    $(document).ready(function () {#}
+{#                        $.ajax({#}
+{#                            dataType: "json",#}
+                            {#TODAY PRICE#}
+{#                            url: "/stocks/get_index_price/",#}
+{#                            data: 'ticker=' + ticker0,#}
+{#                            success: function (result) {#}
+                                {#alert(result.ticker + ' \t' + result.price)#}
+{#                                price_out = result.price#}
+{#                                ticker_out = result.ticker#}
+                                {#set_form(index_ticker_from, ticker_out)#}
+{#                                set_form(index_indicator_form, price_out)#}
+{#                            },#}
+{#                            error: function () {#}
+{#                                alert('Error occured');#}
+{#                            }#}
+{#                        });#}
+{#                    });#}
+{#                }#}
+                {#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#}
+{#                get_data(#}
+{#                    ticker_j,#}
+{#                    i)#}
+{##}
+{#            </script>#}
     <table class="table table-striped table-sm">
         <thead>
         <tr>
@@ -116,9 +160,18 @@
         </thead>
         <tbody>
         {% for ticker,value in indexes.items() %}
+            {% set i =  loop.index %}
+            {% set ticker_j =  value[0][0] %}
+
+            <script>
+            var i = {{i|tojson}};
+
+                document.getElementById(i).innerHTML = 11111;
+            </script>
+
             <tr>
-                <td>{{ loop.index }}</td>
-                <td>{{ ticker }}</td>
+                <td> {{ loop.index }}</td>
+                <td id=i></td>
                 <td>{{ value[0][0] }}</td>
                 <td>{{ value[1] }}</td>
                 <td>{{ value[0][1] }}</td>
