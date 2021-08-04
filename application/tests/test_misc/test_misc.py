@@ -5,6 +5,7 @@ import pytest
 from pandas._libs.tslibs.timestamps import Timestamp
 from iexfinance.utils.exceptions import  IEXQueryError
 from application.misc import ServerExeption,SomethingBadHappened,NoSuchStock
+from app import app
 # @pytest.fixture
 # def client():
 #     with app.test_client() as test_client:

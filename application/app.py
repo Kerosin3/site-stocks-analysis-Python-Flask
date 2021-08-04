@@ -1,7 +1,7 @@
 from flask import Flask,render_template,request,redirect
 from werkzeug.exceptions import BadRequest,InternalServerError,NotAcceptable
 app = Flask(__name__)
-
+test = '1'
 from application.views.stocks_main import stocks_main_views
 from application.misc.stocks_getter import get_data_historical,get_lastday_data,get_today_price
 from os import getenv,environ

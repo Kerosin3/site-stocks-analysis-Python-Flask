@@ -1,1 +1,1 @@
-from .stocks_main import stocks_main_views
+from .stocks_main import stocks_main_views,get_today_price_url
