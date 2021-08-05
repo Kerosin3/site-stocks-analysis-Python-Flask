@@ -35,5 +35,5 @@ def get_today_price_url():
         ticker=ticker,
         price=price
     )
-
+    # return jsonify(result=price)
 

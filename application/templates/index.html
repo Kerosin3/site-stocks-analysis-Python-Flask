@@ -106,81 +106,110 @@
         {#document.getElementById('index_indicator').innerHTML = index_data[0];#}
     </script>
     {#  https://stackoverflow.com/questions/3302702/jquery-return-value-using-ajax-result-on-success    #}
+    <script type=text/javascript>
+        $SCRIPT_ROOT = {{ request.script_root|tojson }};
+    </script>
+<script type=text/javascript>
+  $(function() {
+    $('a#calculate').bind('click', function() {
+      {#$.getJSON($SCRIPT_ROOT + '/_add_numbers', {#}
+        $.getJSON($SCRIPT_ROOT + '/stocks/get_index_price', {
+        ticker: $('input[name="ticker"]').val(),
+        {#  a: $('input[name="a"]').val(),#}
+        {#  b: $('input[name="b"]').val()#}
+      }, function(data) {
+          {#price_out = result.price#}
+          {#ticker_out = result.ticker#}
+        $("#result_ticker").text(data.ticker);
+        $("#result_price").text(data.price);
+      });
+      return false;
+    });
+  });
+</script>
+    <h1>jQuery Example</h1>
+    <p><input type=text size=5 name=ticker> +
+{#        <input type=text size=5 name=b> =#}
+        <span id=result_ticker>?</span>
+        <span id=result_price>?</span>
+    <p><a href='/stocks/get_index_price' id=calculate>calculate server side</a>
 
 
+        {#            <script>#}
+        {#                var i = {{i|tojson}};#}
+        {#                var ticker_j = {{ticker_j|tojson}};#}
+        {#                function set_form(id, value) {#}
+        {#                    document.getElementById(id).innerHTML = value;#}
+        {#                    return true#}
+        {#                }#}
+        {##}
+        {#                function get_data(ticker0, index_indicator_form) {#}
+        {#                    var price_out = 0;#}
+        {#                    let ticker_out = '';#}
+        {#                    $(document).ready(function () {#}
+        {#                        $.ajax({#}
+        {#                            dataType: "json",#}
+        {#TODAY PRICE#}
+        {#                            url: "/stocks/get_index_price/",#}
+        {#                            data: 'ticker=' + ticker0,#}
+        {#                            success: function (result) {#}
+        {#alert(result.ticker + ' \t' + result.price)#}
+        {#                                price_out = result.price#}
+        {#                                ticker_out = result.ticker#}
+        {#set_form(index_ticker_from, ticker_out)#}
+        {#                                set_form(index_indicator_form, price_out)#}
+        {#                            },#}
+        {#                            error: function () {#}
+        {#                                alert('Error occured');#}
+        {#                            }#}
+        {#                        });#}
+        {#                    });#}
+        {#                }#}
+        {#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#}
+        {#                get_data(#}
+        {#                    ticker_j,#}
+        {#                    i)#}
+        {##}
+        {#            </script>#}
 
-
-{#            <script>#}
-{#                var i = {{i|tojson}};#}
-{#                var ticker_j = {{ticker_j|tojson}};#}
-{#                function set_form(id, value) {#}
-{#                    document.getElementById(id).innerHTML = value;#}
-{#                    return true#}
-{#                }#}
+{#    <table class="table table-striped table-sm">#}
+{#        <thead>#}
+{#        <tr>#}
+{#            <th scope="col">№</th>#}
+{#            <th scope="col">ticker</th>#}
+{#            <th scope="col">current index</th>#}
+{#            <th scope="col">last day close</th>#}
+{#            <th scope="col">price change</th>#}
+{#            <th scope="col">volume change</th>#}
+{#            <th scope="col">Header</th>#}
+{#        </tr>#}
+{#        </thead>#}
+{#        <tbody>#}
 {##}
-{#                function get_data(ticker0, index_indicator_form) {#}
-{#                    var price_out = 0;#}
-{#                    let ticker_out = '';#}
-{#                    $(document).ready(function () {#}
-{#                        $.ajax({#}
-{#                            dataType: "json",#}
-                            {#TODAY PRICE#}
-{#                            url: "/stocks/get_index_price/",#}
-{#                            data: 'ticker=' + ticker0,#}
-{#                            success: function (result) {#}
-                                {#alert(result.ticker + ' \t' + result.price)#}
-{#                                price_out = result.price#}
-{#                                ticker_out = result.ticker#}
-                                {#set_form(index_ticker_from, ticker_out)#}
-{#                                set_form(index_indicator_form, price_out)#}
-{#                            },#}
-{#                            error: function () {#}
-{#                                alert('Error occured');#}
-{#                            }#}
-{#                        });#}
-{#                    });#}
-{#                }#}
-                {#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#}
-{#                get_data(#}
-{#                    ticker_j,#}
-{#                    i)#}
+{#        {% for ticker,value in indexes.items() %}#}
+            {#            <h1> {{ loop.index }}</h1>#}
+            {#            <meta id="loop_len" content={{ loop.length }} r>#}
+            {#            <meta id="data_index" content={{ loop.index }}>#}
 {##}
-{#            </script>#}
-    <table class="table table-striped table-sm">
-        <thead>
-        <tr>
-            <th scope="col">№</th>
-            <th scope="col">ticker</th>
-            <th scope="col">current index</th>
-            <th scope="col">last day close</th>
-            <th scope="col">price change</th>
-            <th scope="col">volume change</th>
-            <th scope="col">Header</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for ticker,value in indexes.items() %}
-            {% set i =  loop.index %}
-            {% set ticker_j =  value[0][0] %}
-
-            <script>
-            var i = {{i|tojson}};
-
-                document.getElementById(i).innerHTML = 11111;
-            </script>
-
-            <tr>
-                <td> {{ loop.index }}</td>
-                <td id=i></td>
-                <td>{{ value[0][0] }}</td>
-                <td>{{ value[1] }}</td>
-                <td>{{ value[0][1] }}</td>
-                <td>text</td>
-                <td>text</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            {#https://stackoverflow.com/questions/40701973/create-dynamically-html-div-jinja2-and-ajax#}
+            {#            <script>#}
+            {#                var current_index = 999#}
+            {#                current_index = document.querySelector('meta[id="data_index"]')['content']#}
+            {#                document.write('#######')#}
+            {#                document.write(current_index)#}
+            {#            </script>#}
+{#            <tr>#}
+{#                <td> {{ loop.index }}</td>#}
+{#                <td id={{ loop.index }}>{{ ticker }}</td>#}
+{#                <td>{{ value[0][0] }}</td>#}
+{#                <td>{{ value[1] }}</td>#}
+{#                <td>{{ value[0][1] }}</td>#}
+{#                <td>text</td>#}
+{#                <td>text</td>#}
+{#            </tr>#}
+{#        {% endfor %}#}
+{#        </tbody>#}
+{#    </table>#}
 
 
     {% block body2 %}

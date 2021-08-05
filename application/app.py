@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request,redirect
+from flask import Flask,render_template,request,redirect,jsonify
 from werkzeug.exceptions import BadRequest,InternalServerError,NotAcceptable
 app = Flask(__name__)
 test = '1'
@@ -52,6 +52,21 @@ def index_page():
             return render_template("index.html", indexes=data0)
         else:
             raise BadRequest('This index has been already added')
+
+@app.route('/_add_numbers')
+def add_numbers():
+    # a = request.args.get('a', 0, type=int)
+    # b = request.args.get('b', 0, type=int)
+    # return jsonify(result=a + b)
+    ticker = request.args.get('ticker')
+    price = get_today_price(ticker)
+    # return jsonify(
+    #     ticker=ticker,
+    #     price=price
+    # )
+    return jsonify(result=price)
+
+
 
 
 if __name__ == '__main__':
