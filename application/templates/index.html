@@ -110,16 +110,12 @@
         $SCRIPT_ROOT = {{ request.script_root|tojson }};
     </script>
 <script type=text/javascript>
+var tik = 'TSLA'
   $(function() {
     $('a#calculate').bind('click', function() {
-      {#$.getJSON($SCRIPT_ROOT + '/_add_numbers', {#}
         $.getJSON($SCRIPT_ROOT + '/stocks/get_index_price', {
-        ticker: $('input[name="ticker"]').val(),
-        {#  a: $('input[name="a"]').val(),#}
-        {#  b: $('input[name="b"]').val()#}
+        ticker: tik,
       }, function(data) {
-          {#price_out = result.price#}
-          {#ticker_out = result.ticker#}
         $("#result_ticker").text(data.ticker);
         $("#result_price").text(data.price);
       });
@@ -128,7 +124,7 @@
   });
 </script>
     <h1>jQuery Example</h1>
-    <p><input type=text size=5 name=ticker> +
+{#    <p><input type=text size=5 name=ticker> +#}
 {#        <input type=text size=5 name=b> =#}
         <span id=result_ticker>?</span>
         <span id=result_price>?</span>
