@@ -1,5 +1,6 @@
 #https://addisonlynch.github.io/
 #iexcloud.io
+# https://addisonlynch.github.io/iexfinance/stable/usage.html?highlight=indexes
 from iexfinance.stocks import Stock,get_historical_data
 from datetime import date
 from datetime import datetime, timedelta
@@ -80,3 +81,16 @@ def get_today_price(index:Stock):
     price = price[ticker]
     price = price['price']
     return price
+
+
+def get_today_prices_several(indexex:list):
+    stocks = Stock(indexex)
+    prices = stocks.get_price().to_dict()
+    out = {}
+    for stock,price in prices.items():
+        out[stock] = price['price']
+    return out
+
+
+
+

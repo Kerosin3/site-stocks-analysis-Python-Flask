@@ -36,4 +36,11 @@ def get_today_price_url():
         price=price
     )
     # return jsonify(result=price)
-
+@stocks_main_views.route("/get_indexes_prices/", methods=["GET"])
+def get_today_price_several_url():
+    # tickers = request.args.get('several_tickers')
+    tickers = request.args.getlist("several_tickers")
+    # print('==============',tickers)
+    # print('==============',statuses)
+    prices = application.misc.stocks_getter.get_today_prices_several(tickers)
+    return jsonify(prices)

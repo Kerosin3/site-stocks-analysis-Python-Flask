@@ -1,16 +1,16 @@
 # from application import a
 # from application import app
-from application.misc import get_data_historical,get_lastday_data,get_today_price
+from application.misc import get_data_historical,get_lastday_data,get_today_price,get_today_prices_several
 import pytest
 from pandas._libs.tslibs.timestamps import Timestamp
 from iexfinance.utils.exceptions import  IEXQueryError
 from application.misc import ServerExeption,SomethingBadHappened,NoSuchStock
 from app import app
-# @pytest.fixture
-# def client():
-#     with app.test_client() as test_client:
-#         with app.app_context():
-#             yield test_client
+@pytest.fixture
+def client():
+    with app.test_client() as test_client:
+        with app.app_context():
+            yield test_client
 
 def test_stock_getter_lastday():
     ticker = 'TSLA'
@@ -52,3 +52,16 @@ def test_today_price_not_existsable_stock_failure_unknown():
     ticker = ''
     with pytest.raises(NoSuchStock):
         price = get_today_price(ticker)
+
+def test_get_today_prices_several():
+    tickers = ['TSLA','NVDA','ADBE']
+    a = get_today_prices_several(tickers)
+    print(a)
+
+def test_status(client):
+    tickers = ['TSLA', 'NVDA', 'ADBE']
+    out = {'several_tickers':tickers}
+    rv = client.get('/stocks/get_indexes_prices/',
+                    query_string = out)
+    print('data is ',rv.data)
+    assert rv.status_code == 200
