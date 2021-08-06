@@ -111,7 +111,7 @@
     </script>
 <script type=text/javascript>
 var tik = 'TSLA'
-  $(function() {
+  $(document).ready(function() {
     $('a#calculate').bind('click', function() {
         $.getJSON($SCRIPT_ROOT + '/stocks/get_index_price', {
         ticker: tik,
@@ -129,6 +129,34 @@ var tik = 'TSLA'
         <span id=result_ticker>?</span>
         <span id=result_price>?</span>
     <p><a href='/stocks/get_index_price' id=calculate>calculate server side</a>
+
+    <table class="table table-striped table-sm">
+        <thead>
+        <tr>
+            <th scope="col">№</th>
+            <th scope="col">ticker</th>
+            <th scope="col">current index</th>
+            <th scope="col">last day close</th>
+            <th scope="col">price change</th>
+            <th scope="col">volume change</th>
+            <th scope="col">Header</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for ticker,value in indexes.items() %}
+            {% set id_stock_html_tag = 'id_stock_html_tag' ~ loop.index ~ ', '%}
+            <tr>
+                <td> {{ loop.index }}</td>
+                <td id={{ id_stock_html_tag }}>{{ ticker }}</td>
+                <td>{{ value[0][0] }}</td>
+                <td>{{ value[1] }}</td>
+                <td>{{ value[0][1] }}</td>
+                <td>text</td>
+                <td>text</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
 
         {#            <script>#}
