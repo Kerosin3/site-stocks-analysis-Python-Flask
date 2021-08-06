@@ -52,8 +52,8 @@ def get_data_historical(ticker:str):
                                  output_format='pandas')
     except IEXQueryError:
         raise NoSuchStock
-    else:
-        raise SomethingBadHappened
+    # else:
+    #     raise SomethingBadHappened
 
     dff = df.loc[:,['close',"volume"]]
     data_stocks = dff.to_dict()

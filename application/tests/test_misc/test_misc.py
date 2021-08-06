@@ -15,6 +15,7 @@ def client():
 def test_stock_getter_lastday():
     ticker = 'TSLA'
     price,volume = get_lastday_data(ticker)
+    # print(price,volume)
     assert price is not None
     assert type(price) == float
     assert type(volume) == int
@@ -58,10 +59,14 @@ def test_get_today_prices_several():
     a = get_today_prices_several(tickers)
     print(a)
 
-def test_status(client):
+def test_get_today_prices_several_view(client):
     tickers = ['TSLA', 'NVDA', 'ADBE']
     out = {'several_tickers':tickers}
     rv = client.get('/stocks/get_indexes_prices/',
                     query_string = out)
     print('data is ',rv.data)
     assert rv.status_code == 200
+
+def test_indexes_requests_view(client):
+    rv = client.get('/')
+    print('data is ',rv.data)

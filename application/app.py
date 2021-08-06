@@ -3,7 +3,7 @@ from werkzeug.exceptions import BadRequest,InternalServerError,NotAcceptable
 app = Flask(__name__)
 test = '1'
 from application.views.stocks_main import stocks_main_views
-from application.misc.stocks_getter import get_data_historical,get_lastday_data,get_today_price
+from application.misc.stocks_getter import get_data_historical,get_lastday_data,get_today_price,get_today_prices_several
 from os import getenv,environ
 import config
 
@@ -33,25 +33,52 @@ indexes_eft_list = [
 
 @app.route("/",endpoint='index',methods=['GET','POST'])
 def index_page():
-    data0 = {}
-    today_prices = {}
+    last_day_prices = {}
     if request.method == 'GET':
+        current_prices = get_today_prices_several(indexes_eft_list)
         for index in indexes_eft_list:
-            data0[index] = get_lastday_data(index),get_today_price(index)
-            # today_prices[index] = get_today_price(index)
-        print('today prices are', today_prices)
-        return render_template("index.html",indexes=data0)
+            last_day_prices[index] = get_lastday_data(index)
+        # return current_prices
+        return render_template("index.html",
+                               current_day_prices=current_prices,
+                               last_day_prices = last_day_prices,
+                               length0 = len(indexes_eft_list))
     elif request.method == 'POST':
         index_ticker = request.form.get("index_ticker")
         if get_lastday_data(index_ticker) is None:
             raise NotAcceptable('There is no such ticker')
         elif index_ticker not in indexes_eft_list:
             indexes_eft_list.append(index_ticker)
-            for index in indexes_eft_list:
-                data0[index] = get_lastday_data(index)
-            return render_template("index.html", indexes=data0)
+            # for index in indexes_eft_list:
+            #     data0[index] = get_lastday_data(index)
+            return redirect('/')
+            # return render_template("index.html", indexes=data0)
         else:
             raise BadRequest('This index has been already added')
+
+
+# def index_page():
+#     data0 = {}
+#     today_prices = {}
+#     if request.method == 'GET':
+#         for index in indexes_eft_list:
+#             data0[index] = get_lastday_data(index),get_today_price(index)
+#             # today_prices[index] = get_today_price(index)
+#         print('today prices are', today_prices)
+#         return render_template("index.html",indexes=data0)
+#     elif request.method == 'POST':
+#         index_ticker = request.form.get("index_ticker")
+#         if get_lastday_data(index_ticker) is None:
+#             raise NotAcceptable('There is no such ticker')
+#         elif index_ticker not in indexes_eft_list:
+#             indexes_eft_list.append(index_ticker)
+#             for index in indexes_eft_list:
+#                 data0[index] = get_lastday_data(index)
+#             return render_template("index.html", indexes=data0)
+#         else:
+#             raise BadRequest('This index has been already added')
+#
+
 
 @app.route('/_add_numbers')
 def add_numbers():
