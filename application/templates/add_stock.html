@@ -7,5 +7,9 @@
 
 {% block body %}
     <h1> Indexes page</h1>
-
+<script>
+const response = await fetch('/plot')
+const item = await response.json()
+Bokeh.embed.embed_item(item)
+</script>
 {% endblock %}

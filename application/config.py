@@ -1,13 +1,13 @@
 from os import getenv
 
-SQLALCHEMY_DATABASE_URI = getenv("SQLALCHEMY_DATABASE_URI", 'postgresql://USER:PASSWORD@database_local:5432/STOCKS_DB')
+SQLALCHEMY_DATABASE_URI = getenv("SQLALCHEMY_DATABASE_URI", 'postgresql://USER:PASSWORD@database_local:5432/APPLICATION_DB')
 
 
 class Config(object):  # default
     DEBUG = True
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = True
-    # SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI
+    SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI
     # HOST = 'http://localhost'  #
     # PORT = '5000'
 

@@ -1,13 +1,19 @@
 from flask import Flask,render_template,request,redirect,jsonify
 from werkzeug.exceptions import BadRequest,InternalServerError,NotAcceptable
-app = Flask(__name__)
-test = '1'
 from application.views.stocks_main import stocks_main_views
-from application.misc.stocks_getter import get_data_historical,get_lastday_data,get_today_price,get_today_prices_several
+from application.misc.stocks_getter import get_data_historical,get_lastday_data,get_today_price,get_today_prices_several,get_historical_for_graph
 from os import getenv,environ
 import config
+from json import dumps
+from bokeh.embed import json_item
+from application.models.database import db
 
+
+app = Flask(__name__)
 app.register_blueprint(stocks_main_views)
+from flask_migrate import Migrate
+db.init_app(app)
+migrate = Migrate(app, db)  # откуда он знает про db?
 
 # app.config['SERVER_NAME'] = '0.0.0.0:5000'
 environ["FLASK_ENV"] = "development"
@@ -93,7 +99,11 @@ def add_numbers():
     # )
     return jsonify(result=price)
 
-
+@app.route('/plot')
+def plot():
+    # p = make_plot('petal_width', 'petal_length')
+    p = get_historical_for_graph('ADBE')
+    return dumps(json_item(p, "myplot"))
 
 
 if __name__ == '__main__':

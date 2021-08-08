@@ -7,6 +7,10 @@ from datetime import datetime, timedelta
 import os
 from iexfinance.utils.exceptions import  IEXQueryError
 from .errors import ServerExeption,NoSuchStock,SomethingBadHappened
+from bokeh.plotting import figure, output_file, show
+from math import pi
+import pandas as pd
+
 
 os.environ["IEX_TOKEN"] = "Tpk_35acd01b094b4239aa87879709679d22"
 os.environ["IEX_API_VERSION"] = "iexcloud-sandbox"
@@ -62,7 +66,7 @@ def get_data_historical(ticker:str):
 
 
 def get_lastday_data(ticker:str):
-    yesterday = date.today() + timedelta(days=-1)
+    yesterday = date.today() + timedelta(days=-2)
     end = yesterday
     start = yesterday
     df = get_historical_data(ticker, start, end,
@@ -92,5 +96,28 @@ def get_today_prices_several(indexex:list):
     return out
 
 
+def get_historical_for_graph(ticker:str):
+    yesterday = date.today() + timedelta(days=-2)
+    end = yesterday
+    start = datetime(2019, 1, 1)
+    df = get_historical_data(ticker, start, end,
+                             output_format='pandas')
+    df.reset_index(inplace=True)
+    df.rename(columns={'index': 'date'}, inplace=True)
+    df = df.loc[:, ['date', 'open', 'close', "volume", 'high', 'low']]
+    df["date"] = pd.to_datetime(df["date"])
+    inc = df.close > df.open
+    dec = df.open > df.close
+    w = 12 * 60 * 60 * 1000  # half day in ms
+    TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
+    p = figure(x_axis_type="datetime", tools=TOOLS, plot_width=1000, title="MSFT Candlestick")
+    p.xaxis.major_label_orientation = pi / 4
+    p.grid.grid_line_alpha = 0.3
+    p.segment(df.date, df.high, df.date, df.low, color="black")
+    p.vbar(df.date[inc], w, df.open[inc], df.close[inc], fill_color="#D5E1DD", line_color="black")
+    p.vbar(df.date[dec], w, df.open[dec], df.close[dec], fill_color="#F2583E", line_color="black")
+    output_file("candlestick.html", title="candlestick.py example")
+    return p
+    # show(p)  # open a browse
 
 

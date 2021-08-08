@@ -1,11 +1,12 @@
 # from application import a
 # from application import app
-from application.misc import get_data_historical,get_lastday_data,get_today_price,get_today_prices_several
+from application.misc import get_data_historical,get_lastday_data,get_today_price,get_today_prices_several,get_historical_for_graph
 import pytest
 from pandas._libs.tslibs.timestamps import Timestamp
 from iexfinance.utils.exceptions import  IEXQueryError
 from application.misc import ServerExeption,SomethingBadHappened,NoSuchStock
 from app import app
+from bokeh.plotting import show
 @pytest.fixture
 def client():
     with app.test_client() as test_client:
@@ -70,3 +71,8 @@ def test_get_today_prices_several_view(client):
 def test_indexes_requests_view(client):
     rv = client.get('/')
     print('data is ',rv.data)
+
+def test_historical_data_for_graph():
+    ticker = 'ADBE'
+    out = get_historical_for_graph(ticker)
+    show(out)
