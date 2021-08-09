@@ -66,7 +66,7 @@ def get_data_historical(ticker:str):
 
 
 def get_lastday_data(ticker:str):
-    yesterday = date.today() + timedelta(days=-2)
+    yesterday = date.today() + timedelta(days=-3)
     end = yesterday
     start = yesterday
     df = get_historical_data(ticker, start, end,
@@ -121,3 +121,13 @@ def get_historical_for_graph(ticker:str):
     # show(p)  # open a browse
 
 
+def get_data_for_plotting(ticker:str):
+    yesterday = date.today() + timedelta(days=-2)
+    end = yesterday
+    start = datetime(2019, 1, 1)
+    df = get_historical_data(ticker, start, end,
+                            output_format='pandas')
+    df.reset_index(inplace=True)
+    df.rename(columns={'index': 'date'}, inplace=True)
+    df = df.loc[:, ['date', 'open', 'close', "volume", 'high', 'low']]
+    return df

@@ -1,6 +1,6 @@
 from os import getenv
 
-SQLALCHEMY_DATABASE_URI = getenv("SQLALCHEMY_DATABASE_URI", 'postgresql://USER:PASSWORD@database_local:5432/APPLICATION_DB')
+SQLALCHEMY_DATABASE_URI = getenv("SQLALCHEMY_DATABASE_URI", 'postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
 
 
 class Config(object):  # default

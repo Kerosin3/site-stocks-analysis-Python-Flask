@@ -7,7 +7,7 @@ import config
 from json import dumps
 from bokeh.embed import json_item
 from application.models.database import db
-
+from application.models import create_index
 
 app = Flask(__name__)
 app.register_blueprint(stocks_main_views)
@@ -43,6 +43,7 @@ def index_page():
     if request.method == 'GET':
         current_prices = get_today_prices_several(indexes_eft_list)
         for index in indexes_eft_list:
+            #utlize many requests
             last_day_prices[index] = get_lastday_data(index)
         # return current_prices
         return render_template("index.html",
@@ -55,35 +56,12 @@ def index_page():
             raise NotAcceptable('There is no such ticker')
         elif index_ticker not in indexes_eft_list:
             indexes_eft_list.append(index_ticker)
-            # for index in indexes_eft_list:
-            #     data0[index] = get_lastday_data(index)
+            for index in indexes_eft_list:
+                data0[index] = get_lastday_data(index)
             return redirect('/')
             # return render_template("index.html", indexes=data0)
         else:
             raise BadRequest('This index has been already added')
-
-
-# def index_page():
-#     data0 = {}
-#     today_prices = {}
-#     if request.method == 'GET':
-#         for index in indexes_eft_list:
-#             data0[index] = get_lastday_data(index),get_today_price(index)
-#             # today_prices[index] = get_today_price(index)
-#         print('today prices are', today_prices)
-#         return render_template("index.html",indexes=data0)
-#     elif request.method == 'POST':
-#         index_ticker = request.form.get("index_ticker")
-#         if get_lastday_data(index_ticker) is None:
-#             raise NotAcceptable('There is no such ticker')
-#         elif index_ticker not in indexes_eft_list:
-#             indexes_eft_list.append(index_ticker)
-#             for index in indexes_eft_list:
-#                 data0[index] = get_lastday_data(index)
-#             return render_template("index.html", indexes=data0)
-#         else:
-#             raise BadRequest('This index has been already added')
-#
 
 
 @app.route('/_add_numbers')
@@ -104,6 +82,12 @@ def plot():
     # p = make_plot('petal_width', 'petal_length')
     p = get_historical_for_graph('ADBE')
     return dumps(json_item(p, "myplot"))
+#
+# @app.cli.command(help="create all tables")
+# def create_all_tables():
+#     with app.app_context():
+#         migrate.init_app()
+#         migrate.upgrade()
 
 
 if __name__ == '__main__':
