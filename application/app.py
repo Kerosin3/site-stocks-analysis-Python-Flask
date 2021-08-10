@@ -8,6 +8,9 @@ from json import dumps
 from bokeh.embed import json_item
 from application.models.database import db
 from application.models import create_index
+from datetime import date
+from datetime import datetime, timedelta
+from application.models.db_functions import filling_indexes_db
 
 app = Flask(__name__)
 app.register_blueprint(stocks_main_views)
@@ -37,31 +40,76 @@ indexes_eft_list = [
     'IWM'
 ]
 
+# @app.route("/",endpoint='index',methods=['GET','POST'])
+# def index_page():
+#     last_day_prices = {}
+#     if request.method == 'GET':
+#         current_prices = get_today_prices_several(indexes_eft_list)
+#         for index in indexes_eft_list:
+#             #utlize many requests
+#             last_day_prices[index] = get_lastday_data(index)
+#         # return current_prices
+#         return render_template("index.html",
+#                                current_day_prices=current_prices,
+#                                last_day_prices = last_day_prices,
+#                                length0 = len(indexes_eft_list))
+#     elif request.method == 'POST':
+#         index_ticker = request.form.get("index_ticker")
+#         if get_lastday_data(index_ticker) is None:
+#             raise NotAcceptable('There is no such ticker')
+#         elif index_ticker not in indexes_eft_list:
+#             indexes_eft_list.append(index_ticker)
+#             for index in indexes_eft_list:
+#                 data0[index] = get_lastday_data(index)
+#             return redirect('/')
+#             # return render_template("index.html", indexes=data0)
+#         else:
+#             raise BadRequest('This index has been already added')
+
+
 @app.route("/",endpoint='index',methods=['GET','POST'])
 def index_page():
-    last_day_prices = {}
+    today =  date.today()
+    current_data = datetime.now() + timedelta(days=0)
+    indexes_to_add = []
+    # index_ticker = None
     if request.method == 'GET':
-        current_prices = get_today_prices_several(indexes_eft_list)
-        for index in indexes_eft_list:
-            #utlize many requests
-            last_day_prices[index] = get_lastday_data(index)
+        # indexes_to_add.append(str(index_ticker))
+        print('=====================', indexes_to_add)
+        current_day_prices, last_day_prices, \
+        count, data_historical = filling_indexes_db(time0=current_data,
+                                                    list_new_indexes=indexes_to_add)
+        # for ind in last_day_prices:
+        #     ind = xxx.history_data['close'].iloc[-1])
         # return current_prices
+        print('count is =====================',count)
         return render_template("index.html",
-                               current_day_prices=current_prices,
+                               current_day_prices=current_day_prices,
                                last_day_prices = last_day_prices,
-                               length0 = len(indexes_eft_list))
-    elif request.method == 'POST':
+                               length0 = count)
+    elif request.method == 'POST': #why cant redirect?
         index_ticker = request.form.get("index_ticker")
-        if get_lastday_data(index_ticker) is None:
-            raise NotAcceptable('There is no such ticker')
-        elif index_ticker not in indexes_eft_list:
-            indexes_eft_list.append(index_ticker)
-            for index in indexes_eft_list:
-                data0[index] = get_lastday_data(index)
-            return redirect('/')
-            # return render_template("index.html", indexes=data0)
-        else:
-            raise BadRequest('This index has been already added')
+        indexes_to_add.append(index_ticker)
+        current_day_prices, last_day_prices, \
+        count, data_historical = filling_indexes_db(time0=current_data,
+                                                    list_new_indexes=indexes_to_add)
+        indexes_to_add.clear()
+        return render_template("index.html",
+                               current_day_prices=current_day_prices,
+                               last_day_prices=last_day_prices,
+                               length0=count)
+    #     if get_lastday_data(index_ticker) is None:
+    #         raise NotAcceptable('There is no such ticker')
+    #     elif index_ticker not in indexes_eft_list:
+    #         indexes_eft_list.append(index_ticker)
+    #         for index in indexes_eft_list:
+    #             data0[index] = get_lastday_data(index)
+    #         return redirect('/')
+    #         # return render_template("index.html", indexes=data0)
+    #     else:
+    #         raise BadRequest('This index has been already added')
+
+
 
 
 @app.route('/_add_numbers')

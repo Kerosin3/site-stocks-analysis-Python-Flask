@@ -113,29 +113,30 @@
         $SCRIPT_ROOT = {{ request.script_root|tojson }};
     </script>
     <meta id="length1" content={{ length0 }}>
+{#    <meta id="length1" content={{ length0 }}>#}
 
-    <script type=text/javascript>
-        var tik = 'TSLA'
-        len1 = document.querySelector('meta[id="length1"]')['content']
-        $(document).ready(function () {
+{#    <script type=text/javascript>#}
+{#        var tik = 'TSLA'#}
+{#        len1 = document.querySelector('meta[id="length1"]')['content']#}
+{#        $(document).ready(function () {#}
             {#var id_stock = '#' + 'id_stock_ticker'#}
-            var id_stock = 'id_stock_price'
-            var id_stock_base = 'id_stock_price'
-            for (let ii = 1; ii < len1 + 1; ii += 1) {
+{#            var id_stock = 'id_stock_price'#}
+{#            var id_stock_base = 'id_stock_price'#}
+{#            for (let ii = 1; ii < len1 + 1; ii += 1) {#}
                 {#id_stock = id_stock_base + ii#}
-                $.getJSON({
-                    url: $SCRIPT_ROOT + '/stocks/get_index_price',
-                    data: {ticker: tik},
-                    success: function (data) {
-                        id_stock = id_stock_base + ii
+{#                $.getJSON({#}
+{#                    url: $SCRIPT_ROOT + '/stocks/get_index_price',#}
+{#                    data: {ticker: tik},#}
+{#                    success: function (data) {#}
+{#                        id_stock = id_stock_base + ii#}
                         {#$(id_stock).text(data.ticker);#}
-                        document.getElementById(id_stock).innerHTML = data.price;
-                    }
-                });
+{#                        document.getElementById(id_stock).innerHTML = data.price;#}
+{#                    }#}
+{#                });#}
                 {#return false;#}
-            }
-        });
-    </script>
+{#            }#}
+{#        });#}
+{#    </script>#}
 
     {#    <p><input type=text size=5 name=ticker> +#}
     {#        <input type=text size=5 name=b> =#}
@@ -164,13 +165,13 @@
         {% for ticker,valueP in current_day_prices.items() %}
             {% set id_stock_ticker = 'id_stock_ticker' ~ loop.index %}
             {% set id_stock_price = 'id_stock_price' ~ loop.index %}
-            {% set diff = (last_day_prices[ticker][0] - current_day_prices[ticker]) / (last_day_prices[ticker][0]  / 100) %}
+            {% set diff = (last_day_prices[ticker] - current_day_prices[ticker]) / (last_day_prices[ticker]  / 100) %}
             <tr>
                 <td> {{ loop.index }}</td>
                 <td>{{ ticker }}</td>
                 {#                <td id = {{ id_stock_price }}></td>#}
                 <td> {{ current_day_prices[ticker] }}</td>
-                <td>{{ last_day_prices[ticker][0] }} </td>
+                <td>{{ last_day_prices[ticker] }} </td>
                 {#                <td>{{'%0.2f' % diff|float}}%</td>#}
                 <td class="{{ 'red' if diff < 0 else 'green' }}">{{ '%0.2f' % diff|float }}</td>
 
@@ -183,7 +184,7 @@
                         color: green;
                     }
                 </style>
-                <td> {{ last_day_prices[ticker][1] }} </td>
+                <td> {{ last_day_prices[ticker] }} </td>
                 <td>text</td>
             </tr>
         {% endfor %}

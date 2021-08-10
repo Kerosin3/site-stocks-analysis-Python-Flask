@@ -21,7 +21,7 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True
     ENV = 'development'
-
+    SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI
 
 class TestingConfig(Config):
     TESTING = True

@@ -66,7 +66,7 @@ def get_data_historical(ticker:str):
 
 
 def get_lastday_data(ticker:str):
-    yesterday = date.today() + timedelta(days=-3)
+    yesterday = date.today() + timedelta(days=-1)
     end = yesterday
     start = yesterday
     df = get_historical_data(ticker, start, end,
@@ -97,7 +97,7 @@ def get_today_prices_several(indexex:list):
 
 
 def get_historical_for_graph(ticker:str):
-    yesterday = date.today() + timedelta(days=-2)
+    yesterday = date.today() + timedelta(days=-1)
     end = yesterday
     start = datetime(2019, 1, 1)
     df = get_historical_data(ticker, start, end,

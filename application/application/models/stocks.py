@@ -1,5 +1,10 @@
 from sqlalchemy import Column, Integer, String,DateTime,Text,ForeignKey,PickleType
-from .database import db
+
+# import  application.models.database
+# db = application.models.database.db
+# from .database import db
+# from application.models import db
+from application.models.database import db
 import datetime
 from sqlalchemy.sql import func
 from sqlalchemy.orm import sessionmaker, relationship

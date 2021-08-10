@@ -7,6 +7,7 @@ from iexfinance.utils.exceptions import  IEXQueryError
 from application.misc import ServerExeption,SomethingBadHappened,NoSuchStock
 from app import app
 from bokeh.plotting import show
+
 @pytest.fixture
 def client():
     with app.test_client() as test_client:
