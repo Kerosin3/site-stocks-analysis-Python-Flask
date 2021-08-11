@@ -10,7 +10,7 @@ from application.models.database import db
 from application.models import create_index
 from datetime import date
 from datetime import datetime, timedelta
-from application.models.db_functions import filling_indexes_db
+from application.models.db_functions import filling_indexes_db,remove_indexes
 
 app = Flask(__name__)
 app.register_blueprint(stocks_main_views)
@@ -67,37 +67,60 @@ indexes_eft_list = [
 #             raise BadRequest('This index has been already added')
 
 
-@app.route("/",endpoint='index',methods=['GET','POST'])
+@app.route("/",endpoint='index',methods=['GET','POST','DELETE'])
 def index_page():
     today =  date.today()
     current_data = datetime.now() + timedelta(days=0)
     indexes_to_add = []
-    all_indexes = []
+    indexes_to_delete = []
+    all_indexes = {}
     # index_ticker = None
 
     if request.method == 'GET':
         current_day_prices, last_day_prices, \
         count, data_historical = filling_indexes_db(time0=current_data,
                                                     list_new_indexes=indexes_to_add)
-        for indexx, _ in last_day_prices.items():# unique?
-            all_indexes.append(indexx)
-        print('all indexes=',all_indexes)
+        for n, (ticker,_) in enumerate(last_day_prices.items()):
+            all_indexes[n+1] = ticker
         return render_template("index.html",
                                current_day_prices=current_day_prices,
                                last_day_prices = last_day_prices,
                                length0 = count,
                                list_indexes=dumps(all_indexes))
-    elif request.method == 'POST': #why cant redirect?????????????????
+    elif request.method == 'POST' and request.form.get("delete_pressence") != 'delete': #why cant redirect?????????????????
         index_ticker = request.form.get("index_ticker")
         indexes_to_add.append(index_ticker) #add ticker
         current_day_prices, last_day_prices, \
         count, data_historical = filling_indexes_db(time0=current_data,
                                                     list_new_indexes=indexes_to_add)
         indexes_to_add.clear()
+        for n, (ticker,_) in enumerate(last_day_prices.items()):
+            all_indexes[n+1] = ticker
         return render_template("index.html",
                                current_day_prices=current_day_prices,
                                last_day_prices=last_day_prices,
-                               length0=count)
+                               length0=count,
+                               list_indexes=dumps(all_indexes))
+    elif request.method == 'POST' and request.form.get("delete_pressence") == 'delete':
+        index_ticker = request.form.get("index_ticker")
+        indexes_to_delete.append(index_ticker)
+        remove_indexes(index_ticker)
+        indexes_to_delete.clear()
+        current_day_prices, last_day_prices, \
+        count, data_historical = filling_indexes_db(time0=current_data,
+                                                    list_new_indexes=indexes_to_add)
+        for n, (ticker,_) in enumerate(last_day_prices.items()):
+            all_indexes[n+1] = ticker
+        return render_template("index.html",
+                               current_day_prices=current_day_prices,
+                               last_day_prices=last_day_prices,
+                               length0=count,
+                               list_indexes=dumps(all_indexes))
+
+# @app.route('/remove',methods=[DELETE])
+# def remove():
+
+        # add tic
     #     if get_lastday_data(index_ticker) is None:
     #         raise NotAcceptable('There is no such ticker')
     #     elif index_ticker not in indexes_eft_list:

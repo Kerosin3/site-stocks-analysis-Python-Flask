@@ -59,3 +59,20 @@ def filling_indexes_db(time0:datetime=datetime.now(),
             data_historical[ticker] = index.history_data
     return  current_day_prices,   last_day_prices, count, data_historical
 
+def remove_indexes(*args,Session=sessionmaker(engine)):
+    if len(args) != 0:
+        with Session() as session:
+            for index in args:
+                index_to_delete = session.query(Indexes).\
+                    filter(Indexes.ticker == index).one_or_none()
+                if index_to_delete is not None:
+                    session.delete(index_to_delete)
+                    session.commit()
+                    print('removing',index)
+                else:
+                    continue
+        session.commit()
+        return 1
+    else:
+        return 0
+

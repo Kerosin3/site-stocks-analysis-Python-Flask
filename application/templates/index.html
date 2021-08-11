@@ -18,7 +18,9 @@
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                 Add index to tracking
             </button>
-
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#RemoveIndex">
+                Remove an index
+            </button>
             <!-- Modal -->
             <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                  aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -41,7 +43,42 @@
                                         placeholder="NVDA"
                                         required
                                 >
+                                <input type="hidden" name="delete_pressence" value="not_delete">
                                 <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Add</button>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="modal fade" id="RemoveIndex" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                 aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Index tracker</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Please enter index ticker
+                            <form method="POST">
+                                <label for="stock_ticker">Index ticker:</label>
+                                <input
+                                        id="stock_ticker_input"
+                                        name="index_ticker"
+{#                                        value="DELETE"#}
+                                        type="text"
+                                        minlength="2"
+                                        maxlength="4"
+                                        placeholder="NVDA"
+                                        required
+                                >
+                                <input type="hidden" name="delete_pressence" value="delete">
+                                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Remove</button>
                             </form>
                         </div>
                         <div class="modal-footer">
@@ -112,28 +149,34 @@
     <script type=text/javascript>
         $SCRIPT_ROOT = {{ request.script_root|tojson }};
     </script>
-{#    <meta id="length1" content={{ list_indexes|tojson }}>#}
+    {#    <meta id="length1" content={{ list_indexes|tojson }}>#}
 
-{#    <meta id="length1" content={{ length0 }}>#}
+    {#    <meta id="length1" content={{ length0 }}>#}
 
     <script type=text/javascript>
         {#len1 = document.querySelector('meta[id="length1"]')['content']#}
         {#list_indexes = document.querySelector('meta[id="length1"]')['content']#}
         var list_indexes = {{ list_indexes|tojson }};
-        list_indexes  = JSON.parse(list_indexes);
+        list_indexes = JSON.parse(list_indexes);
         $(document).ready(function () {
             var id_stock = '#' + 'id_stock_ticker'
             var id_stock = 'id_stock_price'
             var id_stock_base = 'id_stock_price'
-            for (let ii = 0; ii < list_indexes.length ; ii++) {
-                var tik = list_indexes[ii]
-                console.log(tik)
+            var count = 0
+            for (const [index_n, ticker_n] of Object.entries(list_indexes)) {
+                {#for (let ii = 0; ii < list_indexes.length ; ii++) {#}
+                var tik = ticker_n
                 $.getJSON({
                     url: $SCRIPT_ROOT + '/stocks/get_index_price',
                     data: {ticker: tik},
                     success: function (data) {
-                        id_stock = id_stock_base + (ii + 1)
+                        {#count += 1#}
+                        id_stock = id_stock_base + (index_n)
+                        {#console.log(typeof id_stock)#}
+                        {#console.log(id_stock)#}
                         $(id_stock).text(data.ticker);
+                        console.log(data.ticker)
+                        console.log(data.price)
                         document.getElementById(id_stock).innerHTML = data.price;
                     }
                 });
@@ -148,23 +191,25 @@
         <tr>
             <th scope="col">№</th>
             <th scope="col">ticker</th>
-            <th scope="col">current index</th>
-            <th scope="col">last day close</th>
-            <th scope="col">price change(%)</th>
-            <th scope="col">last day volume</th>
+            <th scope="col">index open</th>
             <th scope="col">Currend moment price</th>
+            <th scope="col">last day close</th>
+            <th scope="col">price change (d/d,%)</th>
+            <th scope="col">last day volume</th>
         </tr>
         </thead>
         <tbody>
         {% for ticker,valueP in current_day_prices.items() %}
             {% set id_stock_ticker = 'id_stock_ticker' ~ loop.index %}
             {% set id_stock_price = 'id_stock_price' ~ loop.index %}
+
             {% set diff = (last_day_prices[ticker] - current_day_prices[ticker]) / (last_day_prices[ticker]  / 100) %}
             <tr>
                 <td> {{ loop.index }}</td>
                 <td>{{ ticker }}</td>
                 {#                <td id = {{ id_stock_price }}></td>#}
                 <td> {{ current_day_prices[ticker] }}</td>
+                <td id= {{ id_stock_price }}>?</td>
                 <td>{{ last_day_prices[ticker] }} </td>
                 {#                <td>{{'%0.2f' % diff|float}}%</td>#}
                 <td class="{{ 'red' if diff < 0 else 'green' }}">{{ '%0.2f' % diff|float }}</td>
@@ -179,7 +224,7 @@
                     }
                 </style>
                 <td> {{ last_day_prices[ticker] }} </td>
-                <td id = {{ id_stock_price }}>?</td>
+
             </tr>
         {% endfor %}
         </tbody>

@@ -1,7 +1,7 @@
 import pytest
 from app import app
 from application.models.database import db
-from application.models.db_functions import filling_indexes_db,engine
+from application.models.db_functions import filling_indexes_db,engine,remove_indexes
 # import application.models.database
 from application.models.stocks import Stock_one,Stock_data,Indexes
 import random
@@ -247,6 +247,16 @@ def test_add_new_empty_indexes(client,engine):
     print(count_items)
     assert count0  == count1
 
+def test_removing(client,engine):
+    Session = sessionmaker(engine)
+    to_delete = 'QQQM'
+    to_delete_1 = 'AAPL'
+    remove_indexes(to_delete,to_delete_1)
+    with Session() as session:
+        test_stock = session.query(Indexes).filter(Indexes.ticker == to_delete).one_or_none()
+        test_stock_1 = session.query(Indexes).filter(Indexes.ticker == to_delete_1).one_or_none()
+    assert test_stock is None
+    assert test_stock_1 is None
 
 # def test_session(client,engine):
 #     Session = sessionmaker(engine)
