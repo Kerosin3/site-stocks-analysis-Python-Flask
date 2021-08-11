@@ -10,6 +10,16 @@ from .errors import ServerExeption,NoSuchStock,SomethingBadHappened
 from bokeh.plotting import figure, output_file, show
 from math import pi
 import pandas as pd
+from sqlalchemy.orm import Session,sessionmaker,load_only
+from sqlalchemy import create_engine
+# from application.models.stocks import Indexes
+# from application.models.database import engine
+# from application.models.db_functions import engine
+# from application.models.db_functions import get_plotting_data
+# from application.models import get_data_for_plotting
+# import application.models.db_functions
+
+# from application.models.db_functions_plotting import get_plotting_data
 
 
 os.environ["IEX_TOKEN"] = "Tpk_35acd01b094b4239aa87879709679d22"
@@ -105,12 +115,13 @@ def get_historical_for_graph(ticker:str):
     df.reset_index(inplace=True)
     df.rename(columns={'index': 'date'}, inplace=True)
     df = df.loc[:, ['date', 'open', 'close', "volume", 'high', 'low']]
+    # ================================================================
     df["date"] = pd.to_datetime(df["date"])
     inc = df.close > df.open
     dec = df.open > df.close
     w = 12 * 60 * 60 * 1000  # half day in ms
     TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
-    p = figure(x_axis_type="datetime", tools=TOOLS, plot_width=1000, title="MSFT Candlestick")
+    p = figure(x_axis_type="datetime", tools=TOOLS,plot_height=300, plot_width=1400, title=ticker + " candlestick")
     p.xaxis.major_label_orientation = pi / 4
     p.grid.grid_line_alpha = 0.3
     p.segment(df.date, df.high, df.date, df.low, color="black")
@@ -120,6 +131,26 @@ def get_historical_for_graph(ticker:str):
     return p
     # show(p)  # open a browse
 
+
+# def top_func(func):
+#     def wrapper(ticker:str):
+#         # ticker = 'AAPL'
+#         df = func(ticker)
+#         print('------------------------',df)
+#         df["date"] = pd.to_datetime(df["date"])
+#         inc = df.close > df.open
+#         dec = df.open > df.close
+#         w = 12 * 60 * 60 * 1000  # half day in ms
+#         TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
+#         p = figure(x_axis_type="datetime", tools=TOOLS, plot_height=300, plot_width=1400, title=ticker + " candlestick")
+#         p.xaxis.major_label_orientation = pi / 4
+#         p.grid.grid_line_alpha = 0.3
+#         p.segment(df.date, df.high, df.date, df.low, color="black")
+#         p.vbar(df.date[inc], w, df.open[inc], df.close[inc], fill_color="#D5E1DD", line_color="black")
+#         p.vbar(df.date[dec], w, df.open[dec], df.close[dec], fill_color="#F2583E", line_color="black")
+#         # output_file("candlestick.html", title="candlestick.py example")
+#         return p
+#     return wrapper
 
 def get_data_for_plotting(ticker:str):
     yesterday = date.today() + timedelta(days=-2)
@@ -131,3 +162,8 @@ def get_data_for_plotting(ticker:str):
     df.rename(columns={'index': 'date'}, inplace=True)
     df = df.loc[:, ['date', 'open', 'close', "volume", 'high', 'low']]
     return df
+
+# from application.models.db_functions import get_plotting_data
+
+
+

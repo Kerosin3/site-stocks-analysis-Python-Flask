@@ -231,6 +231,14 @@
     </table>
 
 
+
+<div id="myplot">
+<script>
+fetch('/plot')
+    .then(function(response) { return response.json() })
+    .then(function(item) { return Bokeh.embed.embed_item(item) })
+</script>
+</div>
     {#            <script>#}
     {#                var i = {{i|tojson}};#}
     {#                var ticker_j = {{ticker_j|tojson}};#}
@@ -309,7 +317,7 @@
 
 
     {% block body2 %}
-        <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+{#        <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>#}
         {#        <form method="post">#}
         {#            <label for="input-stock-name"></label>#}
         {#            <input id="input-stock-name" type="text">#}

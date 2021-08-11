@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+<h1> Here is something</h1>
+<div id="myplot" class="p-3 mb-2 bg-secondary text-white">.bg-secondary >
+<script>
+fetch('/plot')
+    .then(function(response) { return response.json() })
+    .then(function(item) { return Bokeh.embed.embed_item(item) })
+</script>
+</div>
+<script src="{{ url_for('static', filename='js/bokeh-2.3.3.min.js') }}"></script>
+
+</body>
+</html>

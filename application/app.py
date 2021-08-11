@@ -1,7 +1,8 @@
 from flask import Flask,render_template,request,redirect,jsonify
 from werkzeug.exceptions import BadRequest,InternalServerError,NotAcceptable
 from application.views.stocks_main import stocks_main_views
-from application.misc.stocks_getter import get_data_historical,get_lastday_data,get_today_price,get_today_prices_several,get_historical_for_graph
+from application.misc.stocks_getter import get_data_historical,get_lastday_data,get_today_price,get_today_prices_several,get_historical_for_graph,get_data_for_plotting
+from application.models.db_functions_plotting import get_data_for_plotting_wrap
 from os import getenv,environ
 import config
 from json import dumps
@@ -11,6 +12,9 @@ from application.models import create_index
 from datetime import date
 from datetime import datetime, timedelta
 from application.models.db_functions import filling_indexes_db,remove_indexes
+from bokeh.embed import file_html
+from bokeh.resources import CDN
+from bokeh.plotting import figure
 
 app = Flask(__name__)
 app.register_blueprint(stocks_main_views)
@@ -151,8 +155,14 @@ def add_numbers():
 @app.route('/plot')
 def plot():
     # p = make_plot('petal_width', 'petal_length')
-    p = get_historical_for_graph('ADBE')
+    # p = get_historical_for_graph('ADBE')
+    p = get_data_for_plotting_wrap('NOC')
+    # html = file_html(p,CDN,'plot')
+    # return html
     return dumps(json_item(p, "myplot"))
+
+
+    return render_template('test.html')
 #
 # @app.cli.command(help="create all tables")
 # def create_all_tables():

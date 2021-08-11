@@ -68,3 +68,4 @@ def create_index(ticker:str):
         # db.session.add(out)
         # db.session.commit()
     return out,data
+
