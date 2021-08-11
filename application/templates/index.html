@@ -112,41 +112,35 @@
     <script type=text/javascript>
         $SCRIPT_ROOT = {{ request.script_root|tojson }};
     </script>
-    <meta id="length1" content={{ length0 }}>
+{#    <meta id="length1" content={{ list_indexes|tojson }}>#}
+
 {#    <meta id="length1" content={{ length0 }}>#}
 
-{#    <script type=text/javascript>#}
-{#        var tik = 'TSLA'#}
-{#        len1 = document.querySelector('meta[id="length1"]')['content']#}
-{#        $(document).ready(function () {#}
-            {#var id_stock = '#' + 'id_stock_ticker'#}
-{#            var id_stock = 'id_stock_price'#}
-{#            var id_stock_base = 'id_stock_price'#}
-{#            for (let ii = 1; ii < len1 + 1; ii += 1) {#}
-                {#id_stock = id_stock_base + ii#}
-{#                $.getJSON({#}
-{#                    url: $SCRIPT_ROOT + '/stocks/get_index_price',#}
-{#                    data: {ticker: tik},#}
-{#                    success: function (data) {#}
-{#                        id_stock = id_stock_base + ii#}
-                        {#$(id_stock).text(data.ticker);#}
-{#                        document.getElementById(id_stock).innerHTML = data.price;#}
-{#                    }#}
-{#                });#}
-                {#return false;#}
-{#            }#}
-{#        });#}
-{#    </script>#}
-
-    {#    <p><input type=text size=5 name=ticker> +#}
-    {#        <input type=text size=5 name=b> =#}
-    {#    <span id=result_ticker>?</span>#}
-    {#    <span id=result_price>?</span>#}
-
-    {#    {% macro calc_percent(today, yesterday) %}#}
-    {#    ({{ today }} - {{ yesterday }})::numeric(16, {{ precision }})#}
-    {#{% endmacro %}#}
-    {#    #}
+    <script type=text/javascript>
+        {#len1 = document.querySelector('meta[id="length1"]')['content']#}
+        {#list_indexes = document.querySelector('meta[id="length1"]')['content']#}
+        var list_indexes = {{ list_indexes|tojson }};
+        list_indexes  = JSON.parse(list_indexes);
+        $(document).ready(function () {
+            var id_stock = '#' + 'id_stock_ticker'
+            var id_stock = 'id_stock_price'
+            var id_stock_base = 'id_stock_price'
+            for (let ii = 0; ii < list_indexes.length ; ii++) {
+                var tik = list_indexes[ii]
+                console.log(tik)
+                $.getJSON({
+                    url: $SCRIPT_ROOT + '/stocks/get_index_price',
+                    data: {ticker: tik},
+                    success: function (data) {
+                        id_stock = id_stock_base + (ii + 1)
+                        $(id_stock).text(data.ticker);
+                        document.getElementById(id_stock).innerHTML = data.price;
+                    }
+                });
+                {#return false; dont enable this!!!#}
+            }
+        });
+    </script>
 
 
     <table class="table table-striped table-sm">
@@ -158,7 +152,7 @@
             <th scope="col">last day close</th>
             <th scope="col">price change(%)</th>
             <th scope="col">last day volume</th>
-            <th scope="col">Header</th>
+            <th scope="col">Currend moment price</th>
         </tr>
         </thead>
         <tbody>
@@ -185,7 +179,7 @@
                     }
                 </style>
                 <td> {{ last_day_prices[ticker] }} </td>
-                <td>text</td>
+                <td id = {{ id_stock_price }}>?</td>
             </tr>
         {% endfor %}
         </tbody>

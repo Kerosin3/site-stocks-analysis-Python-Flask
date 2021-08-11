@@ -72,24 +72,24 @@ def index_page():
     today =  date.today()
     current_data = datetime.now() + timedelta(days=0)
     indexes_to_add = []
+    all_indexes = []
     # index_ticker = None
+
     if request.method == 'GET':
-        # indexes_to_add.append(str(index_ticker))
-        print('=====================', indexes_to_add)
         current_day_prices, last_day_prices, \
         count, data_historical = filling_indexes_db(time0=current_data,
                                                     list_new_indexes=indexes_to_add)
-        # for ind in last_day_prices:
-        #     ind = xxx.history_data['close'].iloc[-1])
-        # return current_prices
-        print('count is =====================',count)
+        for indexx, _ in last_day_prices.items():# unique?
+            all_indexes.append(indexx)
+        print('all indexes=',all_indexes)
         return render_template("index.html",
                                current_day_prices=current_day_prices,
                                last_day_prices = last_day_prices,
-                               length0 = count)
-    elif request.method == 'POST': #why cant redirect?
+                               length0 = count,
+                               list_indexes=dumps(all_indexes))
+    elif request.method == 'POST': #why cant redirect?????????????????
         index_ticker = request.form.get("index_ticker")
-        indexes_to_add.append(index_ticker)
+        indexes_to_add.append(index_ticker) #add ticker
         current_day_prices, last_day_prices, \
         count, data_historical = filling_indexes_db(time0=current_data,
                                                     list_new_indexes=indexes_to_add)
