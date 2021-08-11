@@ -206,8 +206,8 @@
             {% set diff = (last_day_prices[ticker] - current_day_prices[ticker]) / (last_day_prices[ticker]  / 100) %}
             <tr>
                 <td> {{ loop.index }}</td>
-                <td>{{ ticker }}</td>
-                {#                <td id = {{ id_stock_price }}></td>#}
+                <td><a href="{{ url_for('plot', index_ticker=ticker) }}"> {{ ticker }} </a></td>
+{#                <td>{{ ticker }}</td>#}
                 <td> {{ current_day_prices[ticker] }}</td>
                 <td id= {{ id_stock_price }}>?</td>
                 <td>{{ last_day_prices[ticker] }} </td>
@@ -230,15 +230,19 @@
         </tbody>
     </table>
 
+{#<a href="{{ url_for('products_app.list') }}">#}
+{#    <strong>Products list</strong>#}
+{#  </a>#}
+
+{#<div id="myplot">#}
+{#<script>#}
+{#fetch('/plot')#}
+{#    .then(function(response) { return response.json() })#}
+{#    .then(function(item) { return Bokeh.embed.embed_item(item) })#}
+{#</script>#}
+{#</div>#}
 
 
-<div id="myplot">
-<script>
-fetch('/plot')
-    .then(function(response) { return response.json() })
-    .then(function(item) { return Bokeh.embed.embed_item(item) })
-</script>
-</div>
     {#            <script>#}
     {#                var i = {{i|tojson}};#}
     {#                var ticker_j = {{ticker_j|tojson}};#}

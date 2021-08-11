@@ -152,17 +152,17 @@ def add_numbers():
     # )
     return jsonify(result=price)
 
-@app.route('/plot')
-def plot():
+@app.route('/<string:index_ticker>/',endpoint='plot')
+def plot(index_ticker):
     # p = make_plot('petal_width', 'petal_length')
     # p = get_historical_for_graph('ADBE')
-    p = get_data_for_plotting_wrap('NOC')
+    p = get_data_for_plotting_wrap(index_ticker)
     # html = file_html(p,CDN,'plot')
     # return html
     return dumps(json_item(p, "myplot"))
 
 
-    return render_template('test.html')
+    # return render_template('test.html')
 #
 # @app.cli.command(help="create all tables")
 # def create_all_tables():
