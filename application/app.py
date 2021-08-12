@@ -152,14 +152,21 @@ def add_numbers():
     # )
     return jsonify(result=price)
 
-@app.route('/<string:index_ticker>/',endpoint='plot')
+@app.route('/plot/<string:index_ticker>/',endpoint='plot')
 def plot(index_ticker):
-    # p = make_plot('petal_width', 'petal_length')
-    # p = get_historical_for_graph('ADBE')
+    # index_ticker = 'AAPL'
     p = get_data_for_plotting_wrap(index_ticker)
     # html = file_html(p,CDN,'plot')
     # return html
     return dumps(json_item(p, "myplot"))
+
+# @app.route('/plot')
+# def plot():
+#     index_ticker = 'AAPL'
+#     p = get_data_for_plotting_wrap(index_ticker)
+#     # html = file_html(p,CDN,'plot')
+#     # return html
+#     return dumps(json_item(p, "myplot"))
 
 
     # return render_template('test.html')

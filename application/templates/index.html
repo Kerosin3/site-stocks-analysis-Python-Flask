@@ -202,6 +202,7 @@
         {% for ticker,valueP in current_day_prices.items() %}
             {% set id_stock_ticker = 'id_stock_ticker' ~ loop.index %}
             {% set id_stock_price = 'id_stock_price' ~ loop.index %}
+{#            {% set id_stock_price = 'id_stock_price' ~ loop.index %}#}
 
             {% set diff = (last_day_prices[ticker] - current_day_prices[ticker]) / (last_day_prices[ticker]  / 100) %}
             <tr>
@@ -223,7 +224,8 @@
                         color: green;
                     }
                 </style>
-                <td> {{ last_day_prices[ticker] }} </td>
+                <td> <button type="button" onclick="plotting( {{ '\'' ~ ticker  ~ '\'' }} )" class="btn btn-outline-success">{{ ticker }}</button></td>
+{#                <td> <button onclick="foo(Rome)">Rome</button> </td>#}
 
             </tr>
         {% endfor %}
@@ -234,13 +236,28 @@
 {#    <strong>Products list</strong>#}
 {#  </a>#}
 
-{#<div id="myplot">#}
+<div id="myplot">
 {#<script>#}
 {#fetch('/plot')#}
 {#    .then(function(response) { return response.json() })#}
 {#    .then(function(item) { return Bokeh.embed.embed_item(item) })#}
 {#</script>#}
-{#</div>#}
+    <script type=text/javascript>
+        function plotting(index_ticker) {
+            {#index_ticker = JSON.parse(index_ticker);#}
+            var ticker = '/plot/' + index_ticker
+            console.log(ticker)
+            fetch(ticker)
+                .then(function (response) {
+                    return response.json()
+                })
+                .then(function (item) {
+                    return Bokeh.embed.embed_item(item)
+                })
+            return false
+        }
+</script>
+</div>
 
 
     {#            <script>#}
