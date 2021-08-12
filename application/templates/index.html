@@ -207,7 +207,8 @@
             {% set diff = (last_day_prices[ticker] - current_day_prices[ticker]) / (last_day_prices[ticker]  / 100) %}
             <tr>
                 <td> {{ loop.index }}</td>
-                <td><a href="{{ url_for('plot', index_ticker=ticker) }}"> {{ ticker }} </a></td>
+                <td> <button type="button" onclick="plotting( {{ '\'' ~ ticker  ~ '\'' }} )" class="btn btn-outline-success">{{ ticker }}</button></td>
+{#                <td><a href="{{ url_for('plot', index_ticker=ticker) }}"> {{ ticker }} </a></td>#}
 {#                <td>{{ ticker }}</td>#}
                 <td> {{ current_day_prices[ticker] }}</td>
                 <td id= {{ id_stock_price }}>?</td>
@@ -224,7 +225,8 @@
                         color: green;
                     }
                 </style>
-                <td> <button type="button" onclick="plotting( {{ '\'' ~ ticker  ~ '\'' }} )" class="btn btn-outline-success">{{ ticker }}</button></td>
+                <td><a href="{{ url_for('plot', index_ticker=ticker) }}"> {{ ticker }} </a></td>
+{#                <td> <button type="button" onclick="plotting( {{ '\'' ~ ticker  ~ '\'' }} )" class="btn btn-outline-success">{{ ticker }}</button></td>#}
 {#                <td> <button onclick="foo(Rome)">Rome</button> </td>#}
 
             </tr>
@@ -237,29 +239,30 @@
 {#  </a>#}
 
 <div id="myplot">
-{#<script>#}
-{#fetch('/plot')#}
-{#    .then(function(response) { return response.json() })#}
-{#    .then(function(item) { return Bokeh.embed.embed_item(item) })#}
-{#</script>#}
-    <script type=text/javascript>
-        function plotting(index_ticker) {
-            {#index_ticker = JSON.parse(index_ticker);#}
-            var ticker = '/plot/' + index_ticker
-            console.log(ticker)
-            fetch(ticker)
-                .then(function (response) {
-                    return response.json()
-                })
-                .then(function (item) {
-                    return Bokeh.embed.embed_item(item)
-                })
-            return false
-        }
-</script>
 </div>
 
-
+    <script type=text/javascript>
+            function plotting(index_ticker) {
+                {#index_ticker = JSON.parse(index_ticker);#}
+                var ticker = '/plot/' + index_ticker
+                {#console.log(ticker)#}
+                $("#myplot").empty();
+                fetch(ticker)
+                    .then(function (response) {
+                        return response.json()
+                    })
+                    .then(function (item) {
+                          Bokeh.embed.embed_item(item,'myplot')
+                    })
+                return false
+            }
+</script>
+<script>
+function clearBox(elementID)
+{
+    document.getElementById(elementID).innerHTML = "";
+}
+</script>
     {#            <script>#}
     {#                var i = {{i|tojson}};#}
     {#                var ticker_j = {{ticker_j|tojson}};#}
