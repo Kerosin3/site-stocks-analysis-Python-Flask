@@ -67,5 +67,7 @@ def create_index(ticker:str):
         out.history_data = data
         # db.session.add(out)
         # db.session.commit()
+    else:
+        raise
     return out,data
 

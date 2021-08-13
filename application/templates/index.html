@@ -2,6 +2,7 @@
 
 {% block title %}
     Indexes page
+
 {% endblock %}
 
 {% macro calc_percents(name, value='', type='text', size=20) -%}
@@ -9,6 +10,7 @@
 {%- endmacro %}
 
 {% block body %}
+
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         {#            <br>#}
@@ -100,6 +102,20 @@
 
     <h2> Here you can see top index today dynamics</h2>
     {#    <h2>Section title</h2>#}
+    {% if error %}
+        <p class=error><strong>Error:</strong> {{ error }}
+  {% endif %}
+
+    {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
 
     <div class="table-responsive">
 
@@ -263,6 +279,15 @@ function clearBox(elementID)
     document.getElementById(elementID).innerHTML = "";
 }
 </script>
+
+
+{#    <script>#}
+{#    $(document).ready(function() { // When page finished loading#}
+{#  if ( $('.flash').length ) { // if there is an DOM that has class has-error#}
+{#     $('#changePasswordModal').modal('show'); // Show Modal#}
+{#  }#}
+{#});#}
+{#</script>#}
     {#            <script>#}
     {#                var i = {{i|tojson}};#}
     {#                var ticker_j = {{ticker_j|tojson}};#}

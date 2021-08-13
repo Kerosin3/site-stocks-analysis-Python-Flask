@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request,redirect,jsonify
+from flask import Flask,render_template,request,redirect,jsonify,url_for,flash
 from werkzeug.exceptions import BadRequest,InternalServerError,NotAcceptable
 from application.views.stocks_main import stocks_main_views
 from application.misc.stocks_getter import get_data_historical,get_lastday_data,get_today_price,get_today_prices_several,get_historical_for_graph,get_data_for_plotting
@@ -15,6 +15,7 @@ from application.models.db_functions import filling_indexes_db,remove_indexes
 from bokeh.embed import file_html
 from bokeh.resources import CDN
 from bokeh.plotting import figure
+
 
 app = Flask(__name__)
 app.register_blueprint(stocks_main_views)
@@ -36,7 +37,7 @@ else:
     raise EnvironmentError('Not right mode of initialization, aborting')
 app.config.from_object(config_app)
 # environ["FLASK_DEBUG"] = "1"
-
+app.secret_key = 'super secret key'
 indexes_eft_list = [
     'SPLG',
     'QQQM',
@@ -78,9 +79,56 @@ def index_page():
     indexes_to_add = []
     indexes_to_delete = []
     all_indexes = {}
-    # index_ticker = None
+    # error = None
+    if request.method == 'POST' and request.form.get("delete_pressence") != 'delete': #why cant redirect?????????????????
+        index_ticker = request.form.get("index_ticker")
+        indexes_to_add.append(index_ticker) #add ticker
+        full_data = filling_indexes_db(time0=current_data,
+                                                    list_new_indexes=indexes_to_add)
 
-    if request.method == 'GET':
+        if full_data == 0: # error  - invalid symbol syntaxis
+            error = 'Please enter valid symbol'
+            print('hahahahahahaha')
+            # print(error)
+            current_day_prices, last_day_prices, \
+            count, data_historical = filling_indexes_db(time0=current_data,
+                                                     list_new_indexes=[]) #dont add
+            return render_template("index.html",
+                                   current_day_prices=current_day_prices,
+                                   last_day_prices=last_day_prices,
+                                   length0=count,
+                                   list_indexes=dumps(all_indexes), error=error)
+        elif full_data == 1:# error - already added
+            error = 'This stock has been already added'
+            current_day_prices, last_day_prices, \
+            count, data_historical = filling_indexes_db(time0=current_data,
+                                                        list_new_indexes=[])  # dont add
+            return render_template("index.html",
+                                   current_day_prices=current_day_prices,
+                                   last_day_prices=last_day_prices,
+                                   length0=count,
+                                   list_indexes=dumps(all_indexes), error=error)
+
+        else: # no errors
+            current_day_prices, last_day_prices, \
+            count, data_historical = full_data#filling_indexes_db(time0=current_data,
+                                     #                   list_new_indexes=indexes_to_add)  # dont add
+            indexes_to_add.clear()
+            for n, (ticker, _) in enumerate(last_day_prices.items()):
+                all_indexes[n + 1] = ticker
+            error = None
+            flash('Successfully added')
+            return render_template("index.html",
+                                   current_day_prices=current_day_prices,
+                                   last_day_prices=last_day_prices,
+                                   length0=count,
+                                   list_indexes=dumps(all_indexes), error=error)
+    elif request.method == 'GET':
+        # error = request.args['error']  # counterpart for url_for()
+        # if request.args.get('error') is not None:
+        #     error = request.args['error']  # counterpart for url_for()
+        # else:
+        #     error = None
         current_day_prices, last_day_prices, \
         count, data_historical = filling_indexes_db(time0=current_data,
                                                     list_new_indexes=indexes_to_add)
@@ -91,20 +139,13 @@ def index_page():
                                last_day_prices = last_day_prices,
                                length0 = count,
                                list_indexes=dumps(all_indexes))
-    elif request.method == 'POST' and request.form.get("delete_pressence") != 'delete': #why cant redirect?????????????????
-        index_ticker = request.form.get("index_ticker")
-        indexes_to_add.append(index_ticker) #add ticker
-        current_day_prices, last_day_prices, \
-        count, data_historical = filling_indexes_db(time0=current_data,
-                                                    list_new_indexes=indexes_to_add)
-        indexes_to_add.clear()
-        for n, (ticker,_) in enumerate(last_day_prices.items()):
-            all_indexes[n+1] = ticker
-        return render_template("index.html",
-                               current_day_prices=current_day_prices,
-                               last_day_prices=last_day_prices,
-                               length0=count,
-                               list_indexes=dumps(all_indexes))
+
+
+        # return render_template("index.html",
+        #                        current_day_prices=current_day_prices,
+        #                        last_day_prices=last_day_prices,
+        #                        length0=count,
+        #                        list_indexes=dumps(all_indexes),error=error)
     elif request.method == 'POST' and request.form.get("delete_pressence") == 'delete':
         index_ticker = request.form.get("index_ticker")
         indexes_to_delete.append(index_ticker)
@@ -115,11 +156,17 @@ def index_page():
                                                     list_new_indexes=indexes_to_add)
         for n, (ticker,_) in enumerate(last_day_prices.items()):
             all_indexes[n+1] = ticker
+        # return render_template("index.html",
+        #                        current_day_prices=current_day_prices,
+        #                        last_day_prices=last_day_prices,
+        #                        length0=count,
+        #                        list_indexes=dumps(all_indexes),error=error)
+        #
         return render_template("index.html",
                                current_day_prices=current_day_prices,
                                last_day_prices=last_day_prices,
                                length0=count,
-                               list_indexes=dumps(all_indexes))
+                               list_indexes=dumps(all_indexes), error=None)
 
 # @app.route('/remove',methods=[DELETE])
 # def remove():

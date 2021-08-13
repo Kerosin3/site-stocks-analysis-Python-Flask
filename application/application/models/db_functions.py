@@ -8,7 +8,8 @@ from .stocks import Indexes
 from application.misc.stocks_getter import get_data_for_plotting,get_today_price
 from application.models.stocks import create_index
 engine = create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
-
+from iexfinance.utils.exceptions import IEXQueryError
+from flask import flash
 #actially updating...
 def filling_indexes_db(time0:datetime=datetime.now(),
                        Session=sessionmaker(engine),
@@ -21,15 +22,24 @@ def filling_indexes_db(time0:datetime=datetime.now(),
     if (list_new_indexes is not None ) and (list_new_indexes):
         with Session() as session:
             for index in list_new_indexes:
+                #add if there is no such symbol in db
                 if session.query(Indexes).filter(Indexes.ticker == index).one_or_none() is None:
-                    new_index, _ = create_index(index)
-                    session.add(new_index)
-                    session.commit()
-                    print('Added indexes:', index)
+                    try:
+                        print('INDEX ticker ---------------------',index)
+                        new_index, _ = create_index(index)
+                    except IEXQueryError:
+                        print('Error!!!!')
+                        return 0
+                    else:
+                        session.add(new_index)
+                        session.commit()
+                        print('Added indexes:', index)
+                    # finally:
+                        # print('DONE===================================')
                     # count+=1
                 else:
-                    continue
-
+                    # flash('This stock has been already added')
+                    return 1
     with Session() as session: #asking for dates
         data_collection = session.query(Indexes). \
             options(load_only(Indexes.changed_at))  # загружает всё..????
