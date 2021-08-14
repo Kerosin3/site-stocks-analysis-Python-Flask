@@ -87,7 +87,7 @@ def index_page():
                                                     list_new_indexes=indexes_to_add)
 
         if full_data == 0: # error  - invalid symbol syntaxis
-            error = 'Please enter valid symbol'
+            error = 'Please enter a valid symbol'
             print('hahahahahahaha')
             # print(error)
             current_day_prices, last_day_prices, \
@@ -100,6 +100,7 @@ def index_page():
                                    list_indexes=dumps(all_indexes), error=error)
         elif full_data == 1:# error - already added
             error = 'This stock has been already added'
+            flash(error)
             current_day_prices, last_day_prices, \
             count, data_historical = filling_indexes_db(time0=current_data,
                                                         list_new_indexes=[])  # dont add
@@ -148,25 +149,44 @@ def index_page():
         #                        list_indexes=dumps(all_indexes),error=error)
     elif request.method == 'POST' and request.form.get("delete_pressence") == 'delete':
         index_ticker = request.form.get("index_ticker")
-        indexes_to_delete.append(index_ticker)
-        remove_indexes(index_ticker)
-        indexes_to_delete.clear()
-        current_day_prices, last_day_prices, \
-        count, data_historical = filling_indexes_db(time0=current_data,
-                                                    list_new_indexes=indexes_to_add)
-        for n, (ticker,_) in enumerate(last_day_prices.items()):
-            all_indexes[n+1] = ticker
-        # return render_template("index.html",
+
+        if remove_indexes(index_ticker):
+            # indexes_to_delete.append(index_ticker)
+            # indexes_to_delete.clear()
+            current_day_prices, last_day_prices, \
+            count, data_historical = filling_indexes_db(time0=current_data,
+                                                        list_new_indexes=indexes_to_add)
+            for n, (ticker,_) in enumerate(last_day_prices.items()):
+                all_indexes[n+1] = ticker
+            return render_template("index.html",
+                                   current_day_prices=current_day_prices,
+                                   last_day_prices=last_day_prices,
+                                   length0=count,
+                                   list_indexes=dumps(all_indexes), error=None)
+        else:
+            error = 'There is not such stock in database'
+            flash(error)
+            current_day_prices, last_day_prices, \
+            count, data_historical = filling_indexes_db(time0=current_data,
+                                                        list_new_indexes=indexes_to_add)
+            for n, (ticker, _) in enumerate(last_day_prices.items()):
+                all_indexes[n + 1] = ticker
+            return render_template("index.html",
+                                   current_day_prices=current_day_prices,
+                                   last_day_prices=last_day_prices,
+                                   length0=count,
+                                   list_indexes=dumps(all_indexes), error=error)
+                    # return render_template("index.html",
         #                        current_day_prices=current_day_prices,
         #                        last_day_prices=last_day_prices,
         #                        length0=count,
         #                        list_indexes=dumps(all_indexes),error=error)
         #
-        return render_template("index.html",
-                               current_day_prices=current_day_prices,
-                               last_day_prices=last_day_prices,
-                               length0=count,
-                               list_indexes=dumps(all_indexes), error=None)
+        # return render_template("index.html",
+        #                        current_day_prices=current_day_prices,
+        #                        last_day_prices=last_day_prices,
+        #                        length0=count,
+        #                        list_indexes=dumps(all_indexes), error=None)
 
 # @app.route('/remove',methods=[DELETE])
 # def remove():

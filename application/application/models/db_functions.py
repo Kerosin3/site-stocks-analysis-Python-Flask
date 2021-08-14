@@ -79,10 +79,10 @@ def remove_indexes(*args,Session=sessionmaker(engine)):
                     session.delete(index_to_delete)
                     session.commit()
                     print('removing',index)
-                else:
-                    continue
+                else: # thes isnt
+                    return 0
         session.commit()
         return 1
     else:
-        return 0
+        raise
 
