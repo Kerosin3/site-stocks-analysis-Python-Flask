@@ -53,7 +53,7 @@ def before_request():
     g.user = None
     if 'user_id' in session:
         user =  [user for user in users_list if user.id == session['user_id']][0]
-        print('user is ',user)
+        print('Establishing session for user',user)
         g.user = user
     else:
         g.user = None
@@ -65,14 +65,10 @@ def login():
         session.pop('user_id',None) #removing if already login
         username = request.form.get("username")
         password = request.form.get("password")
-        print('entered password=',password)
         user = [user for user in users_list if user.username == username] # only unique!
         if len(user) == 0:
             return redirect(url_for('index'))
-            # print(user)
         user = user[0]
-        # print(password)
-        # print('answer=',(user.password == password))
         if user and (user.password == hashlib.sha512((password + user.salt).encode('utf-8')  ).hexdigest()): #right password
             print('Right password!')
             session['user_id'] = user.id
