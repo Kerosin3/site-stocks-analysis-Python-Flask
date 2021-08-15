@@ -57,10 +57,12 @@
             aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+{#    <p class="text-secondary">.text-secondary</p>#}
+        <h1 class="text-primary text-lg-end " >Hello {{ g.user.username }}</h1>
+{#    <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">#}
     <div class="navbar-nav">
         <div class="nav-item text-nowrap">
-            <a class="nav-link px-3" href="#">Sign out</a>
+            <a class="nav-link px-3" href="{{ url_for('logout') }}">Sign out</a>
         </div>
     </div>
 </header>

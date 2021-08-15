@@ -1,4 +1,8 @@
-from flask import Flask,render_template,request,redirect,jsonify,url_for,flash
+from flask import (
+    Flask,render_template,request,redirect,jsonify,
+    url_for,flash,session,g,abort
+)
+import hashlib, uuid
 from werkzeug.exceptions import BadRequest,InternalServerError,NotAcceptable
 from application.views.stocks_main import stocks_main_views
 from application.misc.stocks_getter import get_data_historical,get_lastday_data,get_today_price,get_today_prices_several,get_historical_for_graph,get_data_for_plotting
@@ -15,7 +19,7 @@ from application.models.db_functions import filling_indexes_db,remove_indexes
 from bokeh.embed import file_html
 from bokeh.resources import CDN
 from bokeh.plotting import figure
-
+from users.users import User,users_list
 
 app = Flask(__name__)
 app.register_blueprint(stocks_main_views)
@@ -38,42 +42,55 @@ else:
 app.config.from_object(config_app)
 # environ["FLASK_DEBUG"] = "1"
 app.secret_key = 'super secret key'
-indexes_eft_list = [
-    'SPLG',
-    'QQQM',
-    'DIA',
-    'IWM'
-]
+# indexes_eft_list = [
+#     'SPLG',
+#     'QQQM',
+#     'DIA',
+#     'IWM'
+# ]
+@app.before_request
+def before_request():
+    g.user = None
+    if 'user_id' in session:
+        user =  [user for user in users_list if user.id == session['user_id']][0]
+        print('user is ',user)
+        g.user = user
+    else:
+        g.user = None
 
-# @app.route("/",endpoint='index',methods=['GET','POST'])
-# def index_page():
-#     last_day_prices = {}
-#     if request.method == 'GET':
-#         current_prices = get_today_prices_several(indexes_eft_list)
-#         for index in indexes_eft_list:
-#             #utlize many requests
-#             last_day_prices[index] = get_lastday_data(index)
-#         # return current_prices
-#         return render_template("index.html",
-#                                current_day_prices=current_prices,
-#                                last_day_prices = last_day_prices,
-#                                length0 = len(indexes_eft_list))
-#     elif request.method == 'POST':
-#         index_ticker = request.form.get("index_ticker")
-#         if get_lastday_data(index_ticker) is None:
-#             raise NotAcceptable('There is no such ticker')
-#         elif index_ticker not in indexes_eft_list:
-#             indexes_eft_list.append(index_ticker)
-#             for index in indexes_eft_list:
-#                 data0[index] = get_lastday_data(index)
-#             return redirect('/')
-#             # return render_template("index.html", indexes=data0)
-#         else:
-#             raise BadRequest('This index has been already added')
 
+@app.route('/login',methods = ['GET','POST'],endpoint='login')
+def login():
+    if request.method == 'POST':
+        session.pop('user_id',None) #removing if already login
+        username = request.form.get("username")
+        password = request.form.get("password")
+        print('entered password=',password)
+        user = [user for user in users_list if user.username == username] # only unique!
+        if len(user) == 0:
+            return redirect(url_for('index'))
+            # print(user)
+        user = user[0]
+        # print(password)
+        # print('answer=',(user.password == password))
+        if user and (user.password == hashlib.sha512((password + user.salt).encode('utf-8')  ).hexdigest()): #right password
+            print('Right password!')
+            session['user_id'] = user.id
+            return redirect(url_for('index')) #index page
+        print('Wrong password!')
+        return redirect(url_for('login'))
+    return render_template('users/login.html')
+
+@app.route("/logout")
+def logout():
+    g.user = None
+    session.clear()
+    return redirect(url_for('login'))
 
 @app.route("/",endpoint='index',methods=['GET','POST','DELETE'])
 def index_page():
+    if not g.user:
+        return redirect(url_for('login'))
     today =  date.today()
     current_data = datetime.now() + timedelta(days=0)
     indexes_to_add = []
