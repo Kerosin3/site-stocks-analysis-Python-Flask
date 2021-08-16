@@ -11,18 +11,19 @@ def create_stock_obj(ticker:str,
     checker = db.session.query(Stock_obj).filter(Stock_obj.ticker == ticker).one_or_none()
     id = None
     if checker is not None: # exists
-        return None
+        return 0
     with Session() as session:
         out = Stock_obj()
         out.ticker = ticker
         data = Stock_data()
-        # db.session.flush()
-        # db.session.refresh(out)
-        id = out.id
         session.add(out)
-        session.commit()
+        session.flush()
+        session.refresh(out)
+        id = out.id
+        # session.commit()
         data.Stock_obj_id = out.id
         session.add(data)
         session.commit()
+        print('creating................',id)
     return id
 

@@ -10,6 +10,7 @@ class Stock_obj(db.Model):
     # __mapper_args__ = {'eager_defaults',True}
     id = Column(Integer, primary_key=True)
     ticker = Column(String, nullable=False,unique=True)
+    comment = Column(String, nullable=False,unique=False)
 
     # prices = relationship("Stock_data",back_populates = "stock_parent",
     #                       uselist=False )
@@ -20,10 +21,11 @@ class Stock_obj(db.Model):
     # user_related = relationship("Users", back_populates="stock")
     # stock_data_ref = relationship("Stock_data", cascade="all,delete", back_populates="stock_obj_ref")
     # stock_ref_id = Column(Integer, ForeignKey('Stock_data.id'))
-    Stock_data = db.relationship('Stock_data', backref='Stock_obj', lazy=True, uselist=False,cascade='delete')
+    Stock_data = relationship('Stock_data', backref='Stock_obj', lazy=True, uselist=False,cascade='delete')
 
     def __repr__(self):
-        return f'Stock: {self.id}, {self.name}, {self.created_at}'
+        return f'Stock: ID:{self.id},ticker:{self.ticker},' \
+               f'data of creation: {self.created_at}'
 
 class Stock_data(db.Model):
     __tablename__ = 'Stock_data'
@@ -42,7 +44,7 @@ class Stock_data(db.Model):
                         onupdate=datetime.datetime.utcnow)
 
     def __repr__(self):
-        return f'Stock data: {self.id}, {self.data_ref}, {self.created_at}'
+        return f'Stock data: {self.id}, {self.Stock_obj_id}, {self.created_at}'
 
 class Prices_tracking(db.Model):
     __tablename__ = 'prices'

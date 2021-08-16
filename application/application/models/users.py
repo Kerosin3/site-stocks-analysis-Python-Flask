@@ -11,6 +11,7 @@ class Users(db.Model):
     created_at = Column(DateTime, nullable=True, default=datetime.datetime.utcnow,
                         server_default=func.now())
     username = Column(String, nullable=False, unique=True)
+    password = Column(String, nullable=False, unique=False)
     tickers_to_track = Column(PickleType, nullable=True) # to track
 
     # prices_alert = relationship('Prices_tracking',back_populates="user_related")
@@ -18,4 +19,7 @@ class Users(db.Model):
                                 back_populates="prices_to_track",uselist=False,passive_deletes=True)
     messanger0 = Column(String, nullable=True, unique=True)
     messanger1 = Column(String, nullable=True, unique=True)
+
+    def __repr__(self):
+        return f'Username:{self.username}, created at:{self.created_at}'
 
