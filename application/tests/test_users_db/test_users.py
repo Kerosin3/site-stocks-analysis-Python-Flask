@@ -3,13 +3,14 @@ from app import app
 from application.models.database import db
 from sqlalchemy import create_engine
 from application.models.users import Users
-from application.models.db_stocks import Stock_obj,Stock_data,Prices_tracking
-from sqlalchemy.orm import Session,sessionmaker,load_only,session
+from application.models.db_stocks import Stock_obj, Stock_data, Prices_tracking
+from sqlalchemy.orm import Session, sessionmaker, load_only, session
 from application.misc.stocks_functions import create_stock_obj
 from .conftest import username_fixture
 from application.models.users import Users
 from application.misc.user_db_funct import create_user
 from application.misc.stocks_functions import create_track_price_object
+
 engine = create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
 Session = sessionmaker(engine)
 
@@ -22,9 +23,11 @@ def client():
         with app.app_context():
             yield test_client
 
+
 @pytest.fixture(scope="session")
 def engine():
     return create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
+
 
 @pytest.fixture
 def test_data_fixture(username_fixture):
@@ -49,14 +52,15 @@ def test_data_fixture(username_fixture):
             print(f'deleting user')
 
 
-def test_user_creation(client,username_fixture,test_data_fixture):
+def test_user_creation(client, username_fixture, test_data_fixture):
     with Session() as session:
         user_to_create = session.query(Users). \
             filter(Users.username == username_fixture).one_or_none()
         assert user_to_create is not None
         print(user_to_create)
 
-def test_Prices_tracking(client,username_fixture,test_data_fixture):
+
+def test_Prices_tracking(client, username_fixture, test_data_fixture):
     with Session() as session:
         assert (create_track_price_object('kaka', test_data_fixture)) is not None
         assert (create_track_price_object('trtr', test_data_fixture)) is not None
@@ -64,15 +68,16 @@ def test_Prices_tracking(client,username_fixture,test_data_fixture):
         price_track_obj = session.query(Prices_tracking). \
             filter(Prices_tracking.user_related == test_data_fixture).all()
         for alert in price_track_obj:
-            print('price objects is',alert)
+            print('price objects is', alert)
             assert alert is not None
             assert alert.user_related == test_data_fixture
         assert session.query(Prices_tracking). \
-            filter(Prices_tracking.user_related == test_data_fixture).count() == 2
+                   filter(Prices_tracking.user_related == test_data_fixture).count() == 2
 
-def test_delete_alert_test_integrity(client,username_fixture):
+
+def test_delete_alert_test_integrity(client, username_fixture):
     id_fix = create_user(username_fixture)
-    id = create_track_price_object('kaka',id_fix)
+    id = create_track_price_object('kaka', id_fix)
     assert id is not None
     assert id_fix is not None
     with Session() as session:
@@ -83,7 +88,7 @@ def test_delete_alert_test_integrity(client,username_fixture):
         session.commit()
         user_check = session.query(Users). \
             filter(Users.id == id_fix).one_or_none()
-        assert user_check is not None # user still exists
+        assert user_check is not None  # user still exists
         price_check = session.query(Prices_tracking). \
             filter(Prices_tracking.user_related == id_fix).one_or_none()
         assert price_check is None  # user still exists
@@ -93,7 +98,7 @@ def test_delete_alert_test_integrity(client,username_fixture):
         session.commit()
 
 
-def test_acessing_valuess(client,username_fixture,test_data_fixture):
+def test_acessing_valuess(client, username_fixture, test_data_fixture):
     id1 = create_track_price_object('kaka', test_data_fixture)
     id2 = create_track_price_object('gaga', test_data_fixture)
     assert id1 is not None
@@ -102,11 +107,14 @@ def test_acessing_valuess(client,username_fixture,test_data_fixture):
         track_objects = session.query(Prices_tracking).all()
         for obj in track_objects:
             print('---------------=================-----------------')
-            print('object exists:',obj)
-        assert  session.query(Prices_tracking).count() == 2
+            print('object exists:', obj)
+        assert session.query(Prices_tracking).count() == 2
         user = session.query(Users). \
             filter(Users.id == test_data_fixture).one_or_none()
         assert user is not None
-        all_tracking_obj = session.query(Prices_tracking).join(Users).filter(Prices_tracking.user_related == test_data_fixture).all()
+        all_tracking_obj = session.query(Prices_tracking). \
+            join(Users). \
+            filter(Prices_tracking.user_related == test_data_fixture). \
+            all()
         for obj in all_tracking_obj:
-            print('--------------',obj)
+            print('--------------', obj)

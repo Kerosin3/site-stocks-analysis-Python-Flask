@@ -195,7 +195,7 @@ def index_page():
                                    list_indexes=dumps(all_indexes), error=error)
 
 @app.route('/redirect0/<string:index_ticker>/',endpoint='redirect0')
-def test(index_ticker):
+def redirect0(index_ticker):
     sa = 'https://seekingalpha.com/symbol/' + str(index_ticker)
     return redirect(sa)
     # return webbrowser.open_new_tab(sa)
@@ -237,7 +237,7 @@ def plot(index_ticker):
 #     with app.app_context():
 #         migrate.init_app()
 #         migrate.upgrade()
-print('==========',app.url_map)
+# print('==========',app.url_map)
 
 if __name__ == '__main__':
     app.run(use_reloader = True,debug=True, host="0.0.0.0", port="5000") #REQUIRED!

@@ -44,16 +44,29 @@ def get_today_price(ticker:str):
 
 def create_stock_obj(ticker:str,
                      Session=sessionmaker(engine)):
-    checker = db.session.query(Stock_obj).filter(Stock_obj.ticker == ticker).one_or_none()
-    id = None
-    if checker is not None: # exists
-        return 0
+    today = datetime.now()
     with Session() as session:
+        checker = session.query(Stock_obj). \
+            filter(Stock_obj.ticker == ticker).one_or_none()
+        if checker is not None: # exists lets update
+            id = checker.id
+            test_stock_data = session.query(Stock_data). \
+                join(Stock_obj). \
+                filter(Stock_data.Stock_obj_id == id). \
+                one()
+            last_change = test_stock_data.changed_at
+            if last_change.date() < today.date():
+                test_stock_data.historical_data = get_hist_data(ticker)
+            return 1
+
+    with Session() as session:
+
+
         out = Stock_obj()
         out.ticker = ticker
         data = Stock_data()
         hist_data_0 = get_hist_data(ticker)
-        if hist_data_0 is None:
+        if hist_data_0 is None: #already exists
             raise
         data.historical_data = hist_data_0 #fill historical data
         price_today = get_today_price(ticker)
