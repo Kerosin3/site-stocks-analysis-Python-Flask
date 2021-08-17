@@ -218,7 +218,7 @@
             <th scope="col">Currend moment price</th>
             <th scope="col">last day close</th>
             <th scope="col">price change (d/d,%)</th>
-            <th scope="col">last day volume</th>
+            <th scope="col">seekingalpha</th>
         </tr>
         </thead>
         <tbody>
@@ -248,7 +248,7 @@
                         color: green;
                     }
                 </style>
-                <td><a href="{{ url_for('plot', index_ticker=ticker) }}"> {{ ticker }} </a></td>
+                <td><a href="{{ url_for('redirect0', index_ticker=ticker) }}" target="_blank"> {{ ticker }} </a></td>
 {#                <td> <button type="button" onclick="plotting( {{ '\'' ~ ticker  ~ '\'' }} )" class="btn btn-outline-success">{{ ticker }}</button></td>#}
 {#                <td> <button onclick="foo(Rome)">Rome</button> </td>#}
 

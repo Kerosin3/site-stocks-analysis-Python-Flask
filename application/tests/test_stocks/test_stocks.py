@@ -7,6 +7,7 @@ from application.models.db_stocks import Stock_obj,Stock_data,Prices_tracking
 from sqlalchemy.orm import Session,sessionmaker,load_only,session
 from application.misc.stocks_functions import create_stock_obj
 from .conftest import myfixture,id_fixture
+# from application.misc.stocks_functions import get_historical_data
 engine = create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
 
 Session = sessionmaker(engine)

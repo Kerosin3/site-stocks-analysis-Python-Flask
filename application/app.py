@@ -20,9 +20,13 @@ from bokeh.embed import file_html
 from bokeh.resources import CDN
 from bokeh.plotting import figure
 from users.users import User,users_list
+import webbrowser
+from application.views.stocks_main_views import stocks_main_app
 
 app = Flask(__name__)
+# print('==========',app.url_map)
 app.register_blueprint(stocks_main_views)
+app.register_blueprint(stocks_main_app)
 from flask_migrate import Migrate
 db.init_app(app)
 migrate = Migrate(app, db)  # откуда он знает про db?
@@ -189,35 +193,12 @@ def index_page():
                                    last_day_prices=last_day_prices,
                                    length0=count,
                                    list_indexes=dumps(all_indexes), error=error)
-                    # return render_template("index.html",
-        #                        current_day_prices=current_day_prices,
-        #                        last_day_prices=last_day_prices,
-        #                        length0=count,
-        #                        list_indexes=dumps(all_indexes),error=error)
-        #
-        # return render_template("index.html",
-        #                        current_day_prices=current_day_prices,
-        #                        last_day_prices=last_day_prices,
-        #                        length0=count,
-        #                        list_indexes=dumps(all_indexes), error=None)
 
-# @app.route('/remove',methods=[DELETE])
-# def remove():
-
-        # add tic
-    #     if get_lastday_data(index_ticker) is None:
-    #         raise NotAcceptable('There is no such ticker')
-    #     elif index_ticker not in indexes_eft_list:
-    #         indexes_eft_list.append(index_ticker)
-    #         for index in indexes_eft_list:
-    #             data0[index] = get_lastday_data(index)
-    #         return redirect('/')
-    #         # return render_template("index.html", indexes=data0)
-    #     else:
-    #         raise BadRequest('This index has been already added')
-
-
-
+@app.route('/redirect0/<string:index_ticker>/',endpoint='redirect0')
+def test(index_ticker):
+    sa = 'https://seekingalpha.com/symbol/' + str(index_ticker)
+    return redirect(sa)
+    # return webbrowser.open_new_tab(sa)
 
 @app.route('/_add_numbers')
 def add_numbers():
@@ -256,7 +237,8 @@ def plot(index_ticker):
 #     with app.app_context():
 #         migrate.init_app()
 #         migrate.upgrade()
-
+print('==========',app.url_map)
 
 if __name__ == '__main__':
     app.run(use_reloader = True,debug=True, host="0.0.0.0", port="5000") #REQUIRED!
+

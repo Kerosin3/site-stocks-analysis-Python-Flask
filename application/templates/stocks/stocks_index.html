@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Index stocks page
+{% endblock %}
+
+{% block body %}
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        {#            <br>#}
+        <h1 class="h2">{{ g.user.username }} Indexes </h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                Add index to tracking
+            </button>
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#RemoveIndex">
+                Remove an index
+            </button>
+            <!-- Modal -->
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                 aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Index tracker</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Please enter index ticker
+                            <form method="post">
+                                <label for="stock_ticker">Index ticker:</label>
+                                <input
+                                        id="stock_ticker_input"
+                                        name="index_ticker"
+                                        type="text"
+                                        minlength="2"
+                                        maxlength="4"
+                                        placeholder="NVDA"
+                                        required
+                                >
+                                <input type="hidden" name="delete_pressence" value="not_delete">
+                                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Add</button>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="modal fade" id="RemoveIndex" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                 aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Index tracker</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Please enter index ticker
+                            <form method="POST">
+                                <label for="stock_ticker">Index ticker:</label>
+                                <input
+                                        id="stock_ticker_input"
+                                        name="index_ticker"
+{#                                        value="DELETE"#}
+                                        type="text"
+                                        minlength="2"
+                                        maxlength="4"
+                                        placeholder="NVDA"
+                                        required
+                                >
+                                <input type="hidden" name="delete_pressence" value="delete">
+                                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Remove</button>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {#            <div class="btn-group me-2">#}
+            {#                <button type="button" class="btn btn-sm btn-outline-secondary">Add index</button>#}
+            {#                <button type="button" class="btn btn-sm btn-outline-secondary">Remove Index</button>#}
+            {#            </div>#}
+
+        </div>
+    </div>
+{% endblock %}
