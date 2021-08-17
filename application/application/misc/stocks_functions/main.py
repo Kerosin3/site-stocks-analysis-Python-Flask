@@ -55,13 +55,18 @@ def create_stock_obj(ticker:str,
                 filter(Stock_data.Stock_obj_id == id). \
                 one()
             last_change = test_stock_data.changed_at
-            if last_change.date() < today.date():
+            if last_change.date() < today.date(): #echecking whether update required
                 test_stock_data.historical_data = get_hist_data(ticker)
-            return 1
-
+                print(f'updating {ticker} data')
+                session.flush()
+                session.refresh(test_stock_data)
+                return test_stock_data.id
+            else:
+                pass # no need to update
+        else:
+            pass # pass i.e stock is not exists
+    #creating stock
     with Session() as session:
-
-
         out = Stock_obj()
         out.ticker = ticker
         data = Stock_data()

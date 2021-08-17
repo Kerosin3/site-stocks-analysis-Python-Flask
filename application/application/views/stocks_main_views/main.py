@@ -1,4 +1,4 @@
-from flask import request, Blueprint,render_template,jsonify,g,redirect,flash
+from flask import request, Blueprint,render_template,jsonify,g,redirect,flash,url_for
 from application.misc.user_db_funct.users import create_user
 from sqlalchemy import create_engine
 from datetime import date
@@ -37,5 +37,5 @@ def index_stocks():
                 flash(error)
 
     else:
-        return  redirect('app.login')
+        return  redirect(url_for('login'))
     return render_template('stocks/stocks_index.html')

@@ -7,7 +7,11 @@ from application.models.db_stocks import Stock_obj,Stock_data,Prices_tracking
 from sqlalchemy.orm import Session,sessionmaker,load_only,session
 from application.misc.stocks_functions import create_stock_obj
 from .conftest import myfixture,id_fixture
+from application.models.users import Users
+from application.misc.stocks_functions import create_stock_obj
+from application.misc.user_db_funct import create_user
 # from application.misc.stocks_functions import get_historical_data
+
 engine = create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
 
 Session = sessionmaker(engine)
@@ -27,6 +31,18 @@ def client():
 def engine():
     return create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
 
+@pytest.fixture
+def test_delete_users_and_obj():
+    with Session() as session:
+        full_data = session.query(Stock_obj).all()
+        for obj in full_data:
+            session.delete(obj)
+            session.commit()
+    with Session() as session:
+        full_data = session.query(Users).all()
+        for obj in full_data:
+            session.delete(obj)
+            session.commit()
 
 
 @pytest.fixture
@@ -96,8 +112,32 @@ def test_acessing_values(client,test_data_fixture,myfixture):
         out = (data_stock_obj.Stock_data.today_price)
         assert out == price
 
-def test_deleting_just_child():
-    pass
+def test_deleting__just_user(client,test_delete_users_and_obj):
+    with Session() as session:
+        id = create_stock_obj('ADBE')
+        print('id is ===== ',id)
+        assert id is not None
+        id_user = create_user('Alex')
+        assert id_user is not None
+        stock_obj = session.query(Stock_obj). \
+            filter(Stock_obj.id == id). \
+            one_or_none()
+        assert stock_obj is not None
+        user_to_delete = session.query(Users). \
+            filter(Users.id== id_user). \
+            one()
+        session.delete(user_to_delete)
+        session.commit()
+        user_to_delete = session.query(Users). \
+            filter(Users.id == id_user). \
+            one_or_none()
+        assert user_to_delete is None
+        stock_obj = session.query(Stock_obj). \
+            filter(Stock_obj.id == id). \
+            one_or_none()
+        assert stock_obj is not None #still persists
+
+
 #
 # def test_add_stock(client,engine):
 #     user = db.session.query(Users).filter(Users.username == 'Alex').one_or_none()
