@@ -10,7 +10,7 @@ class Stock_obj(db.Model):
     # __mapper_args__ = {'eager_defaults',True}
     id = Column(Integer, primary_key=True)
     ticker = Column(String, nullable=False,unique=True)
-    comment = Column(String, nullable=False,unique=False)
+    comment = Column(String, nullable=True,unique=False)
 
     # prices = relationship("Stock_data",back_populates = "stock_parent",
     #                       uselist=False )
@@ -60,4 +60,9 @@ class Prices_tracking(db.Model):
                         server_default=func.now())
     changed_at = Column(DateTime, server_default=func.now(),
                         onupdate=datetime.datetime.utcnow)
+
+    def __repr__(self):
+        return f'related user is {self.user_related},' \
+               f'ticker to track: {self.ticker},' \
+               f'updated at {self.created_at}'
     # user_related = relationship("Users", back_populates="stocks_track")

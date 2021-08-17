@@ -27,3 +27,20 @@ def create_stock_obj(ticker:str,
         print('creating................',id)
     return id
 
+def create_track_price_object(ticker:str,id:int,Session=sessionmaker(engine)):
+    with Session() as session:
+        check = session.query(Prices_tracking). \
+            filter(Prices_tracking.ticker == ticker).one_or_none()
+        #already exists
+        if check is not None:
+            return None
+        else:
+            p0 = Prices_tracking()
+            p0.ticker = ticker
+            p0.user_related = id
+            session.add(p0)
+            session.flush()
+            session.refresh(p0)
+            id_out = p0.user_related
+            session.commit()
+            return id_out
