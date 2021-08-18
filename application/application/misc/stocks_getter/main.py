@@ -60,7 +60,7 @@ def get_data_historical(ticker:str):
     :param ticker:
     :return:
     '''
-    assert (len(ticker) <= 4 ) and (len(ticker) > 0 )
+    assert (len(ticker) <= 5 ) and (len(ticker) > 1 )
     try:
         df = get_historical_data(ticker, start, end,
                                  output_format='pandas')
@@ -133,7 +133,7 @@ def get_historical_for_graph(ticker:str):
 
 
 def get_data_for_plotting(ticker:str):
-    yesterday = date.today() + timedelta(days=-2)
+    yesterday = date.today() + timedelta(days=-1)
     end = yesterday
     start = datetime(2019, 1, 1)
     df = get_historical_data(ticker, start, end,

@@ -72,8 +72,5 @@ def test_get_today_prices_several_view(client):
 def test_indexes_requests_view(client):
     rv = client.get('/')
     print('data is ',rv.data)
+    assert rv.status_code < 400
 
-def test_historical_data_for_graph():
-    ticker = 'ADBE'
-    out = get_historical_for_graph(ticker)
-    show(out)

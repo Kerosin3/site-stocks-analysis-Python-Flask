@@ -3,7 +3,7 @@ from app import app
 from application.models.database import db
 from application.models.db_functions import filling_indexes_db,engine,remove_indexes
 # import application.models.database
-from application.models.stocks import Stock_one,Stock_data,Indexes
+from application.models.stocks import Indexes
 import random
 from application.models import create_index
 import time
@@ -118,10 +118,11 @@ def test_filling_base(client,engine):
             session.add(new_index)
             session.commit()
     with Session() as session:
-        xxx = Indexes.query.filter_by(ticker='SPLG').one()
+        for etf in indexes_eft_list:
+            assert Indexes.query.filter_by(ticker='SPLG').one_or_none() is not None
         # print(xxx.history_data.loc[[-1,-1],['close',"volume"]])
-        print(xxx.index_value_yesterday)
-        print(xxx.index_value_today)
+        # print(xxx.index_value_yesterday)
+        # print(xxx.index_value_today)
         # print(xxx.history_data.iloc[-1])
 
 # def test_whether_update(client):

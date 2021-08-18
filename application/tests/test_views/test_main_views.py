@@ -10,3 +10,4 @@ def client():
 def test_indexes_requests_view(client):
     rv = client.get('/')
     print('data is ============',rv.data)
+    assert rv.status_code < 400
