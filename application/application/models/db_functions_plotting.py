@@ -15,36 +15,39 @@ from bokeh.models import LinearAxis, Range1d, Segment, Legend
 def top_func(func):
     def wrapper(ticker:str):
         df = func(ticker)
-        last = df.index[-1]
-        duration = -90  # sessions
-        sessions = abs(duration)
-        before = df.index[duration]
-        df = df.truncate(before=before, after=last)  # only - days!
+
+        last = df.shape[0]
+        duration = 120  # sessions
+        before = last - duration
+        # before = df.index[s]
+        df = df.truncate(before=before,)  # only - days!
         w = 12 * 60 * 60 * 1000  # half day in ms
         TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
         p = figure(tools=TOOLS, plot_height=350, sizing_mode="stretch_width",
-                   title=ticker + " candlestick" + ' throught ' + str(sessions) + ' sessions ')
+                   title=ticker + " candlestick" + ' throught ' + str(duration) + ' sessions ')
 
         p.add_layout(Legend(click_policy="hide", orientation='horizontal', spacing=20), 'below')
         p.yaxis.axis_label = 'Price'
-        df.reset_index(inplace=True)
-        df.rename(columns={'index': 'date'}, inplace=True)
+        # df.reset_index(inplace=True)
+        # df.rename(columns={'index': 'date'}, inplace=True)
         low, high = df[['open', 'close']].min().min(), df[['open', 'close']].max().max()
         diff = high - low
         p.y_range = Range1d(low - 0.1 * diff, high + 0.1 * diff)
         inc = df.close > df.open
         dec = df.open > df.close
-        p.xaxis.bounds = (0, sessions)
-        print(pd.to_datetime(df["date"]))
-        p.x_range.range_padding = 0.05
-        p.xaxis.major_label_overrides = {
-            i: date.strftime('%b %d') for i, date in enumerate(pd.to_datetime(df["date"]))
-        }
         print(df)
-        print('============', inc)
+        # print(pd.to_datetime(df["date"]))
+        p.x_range.range_padding = 0.05
+
+        p.xaxis.major_label_overrides = {
+            i: date.strftime('%b %d') for i, date in enumerate((df["date"]),start=before)
+        }
+        # print(df)
+        # print('============', inc)
+        p.xaxis.bounds = (before, last)
         p.segment(df.index, df.high, df.index, df.low, color="black", legend_label='Candlestick')
         p.vbar(df.index[inc], 0.5, df.open[inc], df.close[inc],
-               fill_color="#D5E1DD", line_color="black", legend_label='Candlestick')
+               fill_color="#00FF5E", line_color="black", legend_label='Candlestick')
         p.vbar(df.index[dec], 0.5, df.open[dec], df.close[dec],
                fill_color="#F2583E", line_color="black", legend_label='Candlestick')
         # right y axis
