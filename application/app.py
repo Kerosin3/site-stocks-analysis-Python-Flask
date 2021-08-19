@@ -22,6 +22,11 @@ from bokeh.plotting import figure
 from users.users import User,users_list
 import webbrowser
 from application.views.stocks_main_views import stocks_main_app
+from werkzeug.security import check_password_hash
+from flask_login import (
+    login_user,login_manager,
+    logout_user,login_required,UserMixin,current_user,LoginManager
+)
 
 app = Flask(__name__)
 # print('==========',app.url_map)
@@ -52,45 +57,88 @@ app.secret_key = 'super secret key'
 #     'DIA',
 #     'IWM'
 # ]
-@app.before_request
-def before_request():
-    g.user = None
-    if 'user_id' in session:
-        user =  [user for user in users_list if user.id == session['user_id']][0]
-        print('Establishing session for user',user)
-        g.user = user
-    else:
-        g.user = None
+# @app.before_request
+# def before_request():
+#     g.user = None
+#     if 'user_id' in session:
+#         user =  [user for user in users_list if user.id == session['user_id']][0]
+#         print('Establishing session for user',user)
+#         g.user = user
+#     else:
+#         g.user = None
+#
+from application.models.users import LoginForm,RegisterForm
+from flask_bcrypt import Bcrypt
+from application.misc.user_db_funct import create_user
+from application.misc.user_db_funct import get_user
+bcrypt = Bcrypt(app)
+app.config['SESSION_COOKIE_SECURE'] = False
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
 
+@login_manager.user_loader
+def load_user(user_id):
+    user = get_user(id=user_id)
+    print('==============111================')
+    return user
 
 @app.route('/login',methods = ['GET','POST'],endpoint='login')
 def login():
-    if request.method == 'POST':
-        session.pop('user_id',None) #removing if already login
-        username = request.form.get("username")
-        password = request.form.get("password")
-        user = [user for user in users_list if user.username == username] # only unique!
-        if len(user) == 0:
-            return redirect(url_for('index'))
-        user = user[0]
-        if user and (user.password == hashlib.sha512((password + user.salt).encode('utf-8')  ).hexdigest()): #right password
-            print('Right password!')
-            session['user_id'] = user.id
-            return redirect(url_for('index')) #index page
-        print('Wrong password!')
-        return redirect(url_for('login'))
-    return render_template('users/login.html')
+    form = LoginForm()
+    # print('==============================',form.validate_on_submit())
+    if form.validate_on_submit():
+        cur_user = get_user(str(form.username.data))
+        if cur_user is not None:
+            if bcrypt.check_password_hash(cur_user.password,form.password.data):
+                login_user(cur_user)
+                return redirect(url_for('index'))
+    return render_template('users/login.html',form=form)
 
-@app.route("/logout")
+@app.route('/logout',methods = ['GET','POST'],endpoint='logout')
+@login_required
 def logout():
-    g.user = None
-    session.clear()
+    logout_user()
     return redirect(url_for('login'))
 
+@app.route('/register',methods = ['GET','POST'],endpoint='register')
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        new_user = create_user(username=form.username.data,
+                               password=hashed_password)
+        return redirect(url_for('index'))
+    return render_template('users/register.html',form=form)
+# @app.route('/login',methods = ['GET','POST'],endpoint='login')
+# def login():
+#     if request.method == 'POST':
+#         session.pop('user_id',None) #removing if already login
+#         username = request.form.get("username")
+#         password = request.form.get("password")
+#         user = [user for user in users_list if user.username == username] # only unique!
+#         if len(user) == 0:
+#             return redirect(url_for('index'))
+#         user = user[0]
+#         if user and (user.password == hashlib.sha512((password + user.salt).encode('utf-8')  ).hexdigest()): #right password
+#             print('Right password!')
+#             session['user_id'] = user.id
+#             return redirect(url_for('index')) #index page
+#         print('Wrong password!')
+#         return redirect(url_for('login'))
+#     return render_template('users/login.html')
+#
+# @app.route("/logout")
+# def logout():
+#     g.user = None
+#     session.clear()
+#     return redirect(url_for('login'))
+
 @app.route("/",endpoint='index',methods=['GET','POST','DELETE'])
+@login_required
 def index_page():
-    if not g.user:
-        return redirect(url_for('login'))
+    # if not g.user:
+    #     return redirect(url_for('login'))
     today =  date.today()
     current_data = datetime.now() + timedelta(days=0)
     indexes_to_add = []

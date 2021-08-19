@@ -20,7 +20,22 @@ def create_user(username:str,
             session.refresh(user0)
             id = user0.id
             session.commit()
+            print('Created user')
             return id
         else:
             return None
 
+def get_user(username:str='some',id=None):
+    Session = sessionmaker(engine)
+    if id is not None:
+        if type(id) is int:
+            with Session() as session:
+                User = session.query(Users). \
+                    filter(Users.id == id).one_or_none()
+                return User
+        else:
+            return None
+    with Session() as session:
+        User = session.query(Users). \
+            filter(Users.username == username).one_or_none()
+        return User
