@@ -72,17 +72,20 @@ from flask_bcrypt import Bcrypt
 from application.misc.user_db_funct import create_user
 from application.misc.user_db_funct import get_user
 bcrypt = Bcrypt(app)
-app.config['SESSION_COOKIE_SECURE'] = False
+# app.config['SESSION_COOKIE_SECURE'] = False
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
+from flask_wtf.csrf import CsrfProtect
+CsrfProtect(app)
 
 @login_manager.user_loader
 def load_user(user_id):
+    user_id = int(user_id)
     user = get_user(id=user_id)
-    print('==============111================')
+    print('loggined as',user.username)
     return user
-
+#https://stackoverflow.com/questions/21214270/how-to-schedule-a-function-to-run-every-hour-on-flask
 @app.route('/login',methods = ['GET','POST'],endpoint='login')
 def login():
     form = LoginForm()
@@ -92,6 +95,7 @@ def login():
         if cur_user is not None:
             if bcrypt.check_password_hash(cur_user.password,form.password.data):
                 login_user(cur_user)
+                flash('Logged in successfully.')
                 return redirect(url_for('index'))
     return render_template('users/login.html',form=form)
 
@@ -108,6 +112,10 @@ def register():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         new_user = create_user(username=form.username.data,
                                password=hashed_password)
+        if new_user is None: #user exists
+            return render_template('users/register.html',message='Such user is already exists')
+        login_user(get_user(str(form.username.data)))
+        flash('Logged in successfully.')
         return redirect(url_for('index'))
     return render_template('users/register.html',form=form)
 # @app.route('/login',methods = ['GET','POST'],endpoint='login')
@@ -153,8 +161,6 @@ def index_page():
 
         if full_data == 0: # error  - invalid symbol syntaxis
             error = 'Please enter a valid symbol'
-            print('hahahahahahaha')
-            # print(error)
             current_day_prices, last_day_prices, \
             count, data_historical = filling_indexes_db(time0=current_data,
                                                      list_new_indexes=[]) #dont add
@@ -162,10 +168,11 @@ def index_page():
                                    current_day_prices=current_day_prices,
                                    last_day_prices=last_day_prices,
                                    length0=count,
-                                   list_indexes=dumps(all_indexes), error=error)
+                                   list_indexes=dumps(all_indexes), error=error,
+                                   username = current_user.username)
         elif full_data == 1:# error - already added
             error = 'This stock has been already added'
-            flash(error)
+            # flash(error)
             current_day_prices, last_day_prices, \
             count, data_historical = filling_indexes_db(time0=current_data,
                                                         list_new_indexes=[])  # dont add
@@ -173,7 +180,8 @@ def index_page():
                                    current_day_prices=current_day_prices,
                                    last_day_prices=last_day_prices,
                                    length0=count,
-                                   list_indexes=dumps(all_indexes), error=error)
+                                   list_indexes=dumps(all_indexes), error=error,
+                                   username = current_user.username)
 
         else: # no errors
             current_day_prices, last_day_prices, \
@@ -188,7 +196,8 @@ def index_page():
                                    current_day_prices=current_day_prices,
                                    last_day_prices=last_day_prices,
                                    length0=count,
-                                   list_indexes=dumps(all_indexes), error=error)
+                                   list_indexes=dumps(all_indexes), error=error,
+                                   username = current_user.username)
     elif request.method == 'GET':
         # error = request.args['error']  # counterpart for url_for()
         # if request.args.get('error') is not None:
@@ -204,7 +213,8 @@ def index_page():
                                current_day_prices=current_day_prices,
                                last_day_prices = last_day_prices,
                                length0 = count,
-                               list_indexes=dumps(all_indexes))
+                               list_indexes=dumps(all_indexes),
+                               username = current_user.username)
 
 
         # return render_template("index.html",
@@ -227,7 +237,8 @@ def index_page():
                                    current_day_prices=current_day_prices,
                                    last_day_prices=last_day_prices,
                                    length0=count,
-                                   list_indexes=dumps(all_indexes), error=None)
+                                   list_indexes=dumps(all_indexes), error=None,
+                                   username = current_user.username)
         else:
             error = 'There is not such stock in database'
             flash(error)
@@ -240,7 +251,8 @@ def index_page():
                                    current_day_prices=current_day_prices,
                                    last_day_prices=last_day_prices,
                                    length0=count,
-                                   list_indexes=dumps(all_indexes), error=error)
+                                   list_indexes=dumps(all_indexes), error=error,
+                                   username = current_user.username)
 
 @app.route('/redirect0/<string:index_ticker>/',endpoint='redirect0')
 def redirect0(index_ticker):

@@ -14,7 +14,7 @@
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         {#            <br>#}
-        <h1 class="h2"> User Dashboard</h1>
+        <h1 class="h2"> {{ username }} dashboard</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
@@ -72,7 +72,7 @@
                                 <input
                                         id="stock_ticker_input"
                                         name="index_ticker"
-{#                                        value="DELETE"#}
+                                        {#                                        value="DELETE"#}
                                         type="text"
                                         minlength="2"
                                         maxlength="4"
@@ -93,36 +93,45 @@
             {#                <button type="button" class="btn btn-sm btn-outline-secondary">Add index</button>#}
             {#                <button type="button" class="btn btn-sm btn-outline-secondary">Remove Index</button>#}
             {#            </div>#}
-            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
-                <span data-feather="calendar"></span>
-                This week
+            <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Add random index</button>
             </button>
         </div>
     </div>
 
     <h2> Here you can see top index today dynamics</h2>
     <a href="{{ url_for('index') }}" class="btn btn-outline-primary" role="button">Refresh</a>
-
+    <br></br>
+    {% with messages = get_flashed_messages() %}
+        {% if messages and not error %}
+            <ul class=flashes>
+                {% for message in messages %}
+                    <div class="alert alert-success" role="alert">
+                        <strong>{{ message  }}</strong>
+                    </div>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
     {#    <h2>Section title</h2>#}
-{#    {% if error %}#}
-{#        <p class=error><strong>Error:</strong> {{ error }}#}
-{#  {% endif %}#}
+    {#    {% if error %}#}
+    {#        <p class=error><strong>Error:</strong> {{ error }}#}
+    {#  {% endif %}#}
     {% if error %}
-<div class="alert alert-danger" role="alert">
-  <strong>Error:</strong> {{ error }}
-</div>
+        <div class="alert alert-danger" role="alert">
+            <strong>Error:</strong> {{ error }}
+        </div>
     {% endif %}
 
-{#    {% with messages = get_flashed_messages() %}#}
-{#  {% if messages %}#}
-{#    <script>#}
-{#      var messages = {{ messages | safe }};#}
-{#      for (var i=0; i<messages.length; i++) {#}
-{#        alert(messages[i]);#}
-{#      }#}
-{#    </script>#}
-{#  {% endif %}#}
-{#{% endwith %}#}
+    {#    {% with messages = get_flashed_messages() %}#}
+    {#  {% if messages %}#}
+    {#    <script>#}
+    {#      var messages = {{ messages | safe }};#}
+    {#      for (var i=0; i<messages.length; i++) {#}
+    {#        alert(messages[i]);#}
+    {#      }#}
+    {#    </script>#}
+    {#  {% endif %}#}
+    {#{% endwith %}#}
 
     <div class="table-responsive">
 
@@ -225,14 +234,17 @@
         {% for ticker,valueP in current_day_prices.items() %}
             {% set id_stock_ticker = 'id_stock_ticker' ~ loop.index %}
             {% set id_stock_price = 'id_stock_price' ~ loop.index %}
-{#            {% set id_stock_price = 'id_stock_price' ~ loop.index %}#}
+            {#            {% set id_stock_price = 'id_stock_price' ~ loop.index %}#}
 
             {% set diff = (last_day_prices[ticker] - current_day_prices[ticker]) / (last_day_prices[ticker]  / 100) %}
             <tr>
                 <td> {{ loop.index }}</td>
-                <td> <button type="button" onclick="plotting( {{ '\'' ~ ticker  ~ '\'' }} )" class="btn btn-outline-success">{{ ticker }}</button></td>
-{#                <td><a href="{{ url_for('plot', index_ticker=ticker) }}"> {{ ticker }} </a></td>#}
-{#                <td>{{ ticker }}</td>#}
+                <td>
+                    <button type="button" onclick="plotting( {{ '\'' ~ ticker  ~ '\'' }} )"
+                            class="btn btn-outline-success">{{ ticker }}</button>
+                </td>
+                {#                <td><a href="{{ url_for('plot', index_ticker=ticker) }}"> {{ ticker }} </a></td>#}
+                {#                <td>{{ ticker }}</td>#}
                 <td> {{ current_day_prices[ticker] }}</td>
                 <td id= {{ id_stock_price }}>?</td>
                 <td>{{ last_day_prices[ticker] }} </td>
@@ -249,52 +261,51 @@
                     }
                 </style>
                 <td><a href="{{ url_for('redirect0', index_ticker=ticker) }}" target="_blank"> {{ ticker }} </a></td>
-{#                <td> <button type="button" onclick="plotting( {{ '\'' ~ ticker  ~ '\'' }} )" class="btn btn-outline-success">{{ ticker }}</button></td>#}
-{#                <td> <button onclick="foo(Rome)">Rome</button> </td>#}
+                {#                <td> <button type="button" onclick="plotting( {{ '\'' ~ ticker  ~ '\'' }} )" class="btn btn-outline-success">{{ ticker }}</button></td>#}
+                {#                <td> <button onclick="foo(Rome)">Rome</button> </td>#}
 
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-{#<a href="{{ url_for('products_app.list') }}">#}
-{#    <strong>Products list</strong>#}
-{#  </a>#}
+    {#<a href="{{ url_for('products_app.list') }}">#}
+    {#    <strong>Products list</strong>#}
+    {#  </a>#}
 
-<div id="myplot">
-</div>
+    <div id="myplot">
+    </div>
 
     <script type=text/javascript>
-            function plotting(index_ticker) {
-                {#index_ticker = JSON.parse(index_ticker);#}
-                var ticker = '/plot/' + index_ticker
-                {#console.log(ticker)#}
-                $("#myplot").empty();
-                fetch(ticker)
-                    .then(function (response) {
-                        return response.json()
-                    })
-                    .then(function (item) {
-                          Bokeh.embed.embed_item(item,'myplot')
-                    })
-                return false
-            }
-</script>
-<script>
-function clearBox(elementID)
-{
-    document.getElementById(elementID).innerHTML = "";
-}
-</script>
+        function plotting(index_ticker) {
+            {#index_ticker = JSON.parse(index_ticker);#}
+            var ticker = '/plot/' + index_ticker
+            {#console.log(ticker)#}
+            $("#myplot").empty();
+            fetch(ticker)
+                .then(function (response) {
+                    return response.json()
+                })
+                .then(function (item) {
+                    Bokeh.embed.embed_item(item, 'myplot')
+                })
+            return false
+        }
+    </script>
+    <script>
+        function clearBox(elementID) {
+            document.getElementById(elementID).innerHTML = "";
+        }
+    </script>
 
 
-{#    <script>#}
-{#    $(document).ready(function() { // When page finished loading#}
-{#  if ( $('.flash').length ) { // if there is an DOM that has class has-error#}
-{#     $('#changePasswordModal').modal('show'); // Show Modal#}
-{#  }#}
-{#});#}
-{#</script>#}
+    {#    <script>#}
+    {#    $(document).ready(function() { // When page finished loading#}
+    {#  if ( $('.flash').length ) { // if there is an DOM that has class has-error#}
+    {#     $('#changePasswordModal').modal('show'); // Show Modal#}
+    {#  }#}
+    {#});#}
+    {#</script>#}
     {#            <script>#}
     {#                var i = {{i|tojson}};#}
     {#                var ticker_j = {{ticker_j|tojson}};#}
@@ -373,7 +384,7 @@ function clearBox(elementID)
 
 
     {% block body2 %}
-{#        <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>#}
+        {#        <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>#}
         {#        <form method="post">#}
         {#            <label for="input-stock-name"></label>#}
         {#            <input id="input-stock-name" type="text">#}

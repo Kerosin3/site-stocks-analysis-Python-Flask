@@ -10,10 +10,7 @@
 </head>
 
 <body>
-<h1>adasdasda</h1>
-{% if form.errors %}
-{{ form.errors }}
-{% endif %}
+
 {#<form method="post" action="">#}
 {#    {{ form.csrf_token() }}#}
 {#    {{ form.hidden_tag }}#}
@@ -22,18 +19,30 @@
 {#    {{ form.submit }}#}
 {#</form>#}
 {#<a href="{{ url_for('login') }}">Login </a>#}
-  <section class="hero is-warning">
+  <section class="hero is-warning is-fullheight">
     <div class="hero-body">
       <div class="container">
         <div class="columns is-centered">
           <div class="column is-half">
             <form method="POST">
-                {{ form.csrf_token() }}
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="hero-body">
+    <div class="container has-text-centered">
+      <p class="title">
+        New user creation
+      </p>
+          {% if message %}
+        <p class="subtitle">
+        {{ message }}
+      </p>
+         {% endif %}
+    </div>
+  </div>
               <div class="field">
                 <label class="label">Username</label>
                 <div class="control has-icons-left has-icons-right">
-{#                  <input class="input" type="text" name="username" placeholder="Username">#}
-                     {{ form.username }}
+                  <input class="input" type="text" name="username" placeholder="Username">
+{#                     {{ form.username }}#}
                   <span class="icon is-small is-left">
                     <i class="fas fa-user"></i>
                   </span>
@@ -42,8 +51,8 @@
               <div class="field">
                 <label class="label">Password</label>
                 <p class="control has-icons-left">
-{#                  <input class="input" type="password" name="password" placeholder="Password">#}
-                    {{ form.password }}
+                  <input class="input" type="password" name="password" placeholder="Password">
+{#                    {{ form.password }}#}
                   <span class="icon is-small is-left">
                     <i class="fas fa-lock"></i>
                   </span>
