@@ -12,13 +12,20 @@ class Config(object):  # default
         {
             "id": "job1",
             "func": "app:job1",
-            "args": (1, 2),
+            "args": (),
             "trigger": "interval",
             "seconds": 5,
         },
         {
             "id": "job2",
             "func": "app:job_pseupo_update",
+            "args": (),
+            "trigger": "interval",
+            "seconds": 5,
+        },
+        {
+            "id": "job3",
+            "func": "app:job_get_update_all_indexes",
             "args": (),
             "trigger": "interval",
             "seconds": 5,

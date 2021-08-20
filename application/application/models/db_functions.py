@@ -70,6 +70,7 @@ def filling_indexes_db(time0:datetime=datetime.now(),
     return  current_day_prices,   last_day_prices, count, data_historical
 
 def remove_indexes(*args,Session=sessionmaker(engine)):
+    print('deleting')
     if len(args) != 0:
         with Session() as session:
             for index in args:

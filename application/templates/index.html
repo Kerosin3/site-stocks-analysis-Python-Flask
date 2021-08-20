@@ -35,6 +35,7 @@
                         <div class="modal-body">
                             Please enter index ticker
                             <form method="post">
+ <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                 <label for="stock_ticker">Index ticker:</label>
                                 <input
                                         id="stock_ticker_input"
@@ -68,14 +69,15 @@
                         <div class="modal-body">
                             Please enter index ticker
                             <form method="POST">
+                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                 <label for="stock_ticker">Index ticker:</label>
                                 <input
                                         id="stock_ticker_input"
                                         name="index_ticker"
                                         {#                                        value="DELETE"#}
                                         type="text"
-                                        minlength="2"
-                                        maxlength="4"
+                                        minlength="1"
+                                        maxlength="5"
                                         placeholder="NVDA"
                                         required
                                 >
@@ -93,7 +95,8 @@
             {#                <button type="button" class="btn btn-sm btn-outline-secondary">Add index</button>#}
             {#                <button type="button" class="btn btn-sm btn-outline-secondary">Remove Index</button>#}
             {#            </div>#}
-            <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Add random index</button>
+{#            <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Add random index</button>#}
+            <a href="{{ url_for('add_random') }}" class="btn btn-outline-primary" role="button">Add random Index</a>
             </button>
         </div>
     </div>
