@@ -36,6 +36,7 @@ from flask_migrate import Migrate
 db.init_app(app)
 migrate = Migrate(app, db)  # откуда он знает про db?
 
+
 # app.config['SERVER_NAME'] = '0.0.0.0:5000'
 environ["FLASK_ENV"] = "development"
 environ["FLASK_DEBUG"] = "1"
@@ -51,6 +52,20 @@ else:
 app.config.from_object(config_app)
 # environ["FLASK_DEBUG"] = "1"
 app.secret_key = 'super secret key'
+
+
+from flask_apscheduler import APScheduler
+from jobs import job1,job_pseupo_update
+
+
+#
+# scheduler = APScheduler()
+#     # it is also possible to enable the API directly
+#     # scheduler.api_enabled = True  # noqa: E800
+# APScheduler.init_app(job1(),app=app)
+# APScheduler.start()
+# scheduler.init_app(app)
+# scheduler.start()
 # indexes_eft_list = [
 #     'SPLG',
 #     'QQQM',
@@ -77,7 +92,10 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 from flask_wtf.csrf import CsrfProtect
+
 CsrfProtect(app)
+
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -300,5 +318,8 @@ def plot(index_ticker):
 # print('==========',app.url_map)
 
 if __name__ == '__main__':
+    scheduler = APScheduler()
+    scheduler.init_app(app)
+    scheduler.start()
     app.run(use_reloader = True,debug=True, host="0.0.0.0", port="5000") #REQUIRED!
 

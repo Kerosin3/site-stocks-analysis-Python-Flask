@@ -8,8 +8,23 @@ class Config(object):  # default
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI
-    # HOST = 'http://localhost'  #
-    # PORT = '5000'
+    JOBS = [
+        {
+            "id": "job1",
+            "func": "app:job1",
+            "args": (1, 2),
+            "trigger": "interval",
+            "seconds": 5,
+        },
+        {
+            "id": "job2",
+            "func": "app:job_pseupo_update",
+            "args": (),
+            "trigger": "interval",
+            "seconds": 5,
+        }
+    ]
+    SCHEDULER_API_ENABLED = True
 
 class ProductionConfig(Config):
     DEBUG = False
@@ -22,6 +37,9 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_ECHO = True
     ENV = 'development'
     SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI
+
+
+
 
 class TestingConfig(Config):
     TESTING = True
