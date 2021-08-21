@@ -1,8 +1,8 @@
 from application.models.users import Users
 from sqlalchemy.orm import Session,sessionmaker,load_only
 from sqlalchemy import create_engine
-
-engine = create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
+from application.models.database import engine
+# engine = create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
 
 def create_user(username:str,
                 password:str='somepassword'):

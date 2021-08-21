@@ -5,6 +5,6 @@ from sqlalchemy import create_engine
 # from .stocks import Indexes
 # from application.models import Indexes
 db = SQLAlchemy()
-
+engine = create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
 
 

@@ -11,6 +11,7 @@ from bokeh.models import Circle, ColumnDataSource, LinearAxis, Plot, Range1d, Ti
 from sqlalchemy.orm import Session,sessionmaker,load_only
 from sqlalchemy import create_engine
 from bokeh.models import LinearAxis, Range1d, Segment, Legend
+from application.models.database import engine
 
 def top_func(func):
     def wrapper(ticker:str):
@@ -86,7 +87,6 @@ def top_func(func):
 @top_func
 def get_data_for_plotting_wrap(ticker:str):
     if type(ticker) is str:
-        engine = create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
         Session = sessionmaker(engine)
         with Session() as session:
             index_to_plot = session.query(Indexes). \

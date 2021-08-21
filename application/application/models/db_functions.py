@@ -7,10 +7,10 @@ from sqlalchemy.orm import Session,sessionmaker,load_only
 from .stocks import Indexes
 from application.misc.stocks_getter import get_data_for_plotting,get_today_price
 from application.models.stocks import create_index
-engine = create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
 from iexfinance.utils.exceptions import IEXQueryError
 from flask import flash
-#actially updating...
+from application.models.database import engine
+
 def filling_indexes_db(time0:datetime=datetime.now(),
                        Session=sessionmaker(engine),
                        list_new_indexes=None):

@@ -9,10 +9,9 @@ from datetime import datetime, timedelta
 import os
 from iexfinance.utils.exceptions import  IEXQueryError
 from iexfinance.stocks import Stock,get_historical_data
+from application.models.database import engine
 
 
-engine = create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
-# engine = create_engine(app.config_app.SQLALCHEMY_DATABASE_URI)
 os.environ["IEX_TOKEN"] = "Tpk_35acd01b094b4239aa87879709679d22"
 os.environ["IEX_API_VERSION"] = "iexcloud-sandbox"
 
