@@ -12,7 +12,8 @@ from application.misc.stocks_functions import get_hist_data
 from application.misc.stocks_functions import create_stock_obj
 
 
-engine = create_engine(config.TestingConfig.SQLALCHEMY_DATABASE_URI)
+engine = create_engine(config.DevelopmentConfig.SQLALCHEMY_DATABASE_URI)
+# engine = create_engine(config.TestingConfig.SQLALCHEMY_DATABASE_URI)
 import pandas as pd
 Session = sessionmaker(engine)
 
