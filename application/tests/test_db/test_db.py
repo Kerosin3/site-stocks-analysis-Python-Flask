@@ -1,7 +1,7 @@
 import pytest
 from app import app
 from application.models.database import db
-from application.models.db_functions import filling_indexes_db,engine,remove_indexes
+from application.models.db_functions import filling_indexes_db,remove_indexes
 # import application.models.database
 from application.models.stocks import Indexes
 import random
@@ -14,21 +14,19 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session,sessionmaker,load_only,session
 from application.misc.stocks_getter import get_today_price,get_data_for_plotting
 # from application.models.database import filling_indexes_db
-from application.models.database import engine
-# engine = create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
-# Session = sessionmaker(engine)
+from os import getenv
+
 
 @pytest.fixture
 def client():
-    # engine = create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
-    # Session = sessionmaker(engine)
+
     with app.test_client() as test_client:
         with app.app_context():
             yield test_client
 
 @pytest.fixture(scope="session")
 def engine():
-    return create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
+    return create_engine(getenv("SQLALCHEMY_DATABASE_URI"))
 
 # def add_test_index(ticker:str):
 #     out = Indexes()
@@ -120,48 +118,6 @@ def test_filling_base(client,engine):
     with Session() as session:
         for etf in indexes_eft_list:
             assert Indexes.query.filter_by(ticker='SPLG').one_or_none() is not None
-        # print(xxx.history_data.loc[[-1,-1],['close',"volume"]])
-        # print(xxx.index_value_yesterday)
-        # print(xxx.index_value_today)
-        # print(xxx.history_data.iloc[-1])
-
-# def test_whether_update(client):
-#     db.session.query(Indexes).delete()
-#     db.session.commit()
-#     indexes_eft_list = [
-#         'SPLG',
-#         'QQQM',
-#         'DIA',
-#         'IWM'
-#     ]
-#     current_day_prices = {}
-#     last_day_prices = {}
-#     for index in indexes_eft_list:
-#         index, _ = create_index(index)
-#         db.session.add(index)
-#     db.session.commit()
-#     # filled db
-#     # today = date.today()
-#     data_changed = Indexes.query.filter_by(ticker='SPLG').one().changed_at  # changed
-#     if data_changed.date() == datetime.today().date(): #just returning value
-#         print('WE ARE HERE======================')
-#         for index in indexes_eft_list:
-#             current_day_prices[index] = Indexes.query.filter_by\
-#                 (ticker=index).one().index_value_today
-#             last_day_prices[index] = Indexes.query.filter_by\
-#                 (ticker=index).one().index_value_yesterday
-#         db.session.commit()
-#     elif data_changed.date() < datetime.today().date(): #filling if there is some data to update
-#         for index in indexes_eft_list:
-#             index, _ = create_index(index)
-#             db.session.add(index)
-#         db.session.commit()
-#     else:
-#         raise # is impossible
-#     today = date.today()
-#     # date0 = datetime(2021, 8, 9, 12, 55, 16)
-#     assert  bool(current_day_prices) == True #there something
-#     assert  bool(last_day_prices) == True  #there something
 
 
 def test_db_filling_update_not_need(client,engine):
@@ -178,7 +134,7 @@ def test_db_filling_update_not_need(client,engine):
             change_data[indexes.ticker] = indexes.changed_at
     #getting data and change it if need !!!
     current_day_prices,   last_day_prices,  \
-    count, data_historical = filling_indexes_db(current_data,Session)
+    count, data_historical = filling_indexes_db(current_data)
     with Session() as session:
         full_data = session.query(Indexes).all()
         for indexes in full_data:
@@ -198,7 +154,7 @@ def test_db_filling_update_needs(client,engine):
             change_data[indexes.ticker] = indexes.changed_at
     #getting data and change it if need !!!
     current_day_prices,   last_day_prices,  \
-    count, data_historical = filling_indexes_db(current_data,Session)
+    count, data_historical = filling_indexes_db(current_data)
     with Session() as session:
         full_data = session.query(Indexes).all()
         for indexes in full_data:
