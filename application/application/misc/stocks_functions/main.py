@@ -6,14 +6,16 @@ from sqlalchemy.orm import Session,sessionmaker,load_only
 from iexfinance.stocks import Stock,get_historical_data
 from datetime import date
 from datetime import datetime, timedelta
-import os
+
 from iexfinance.utils.exceptions import  IEXQueryError
 from iexfinance.stocks import Stock,get_historical_data
-from application.models.database import engine
+from os import getenv,environ
+from sqlalchemy import create_engine
+# engine = create_engine(getenv("SQLALCHEMY_DATABASE_URI"))
 
 
-os.environ["IEX_TOKEN"] = "Tpk_35acd01b094b4239aa87879709679d22"
-os.environ["IEX_API_VERSION"] = "iexcloud-sandbox"
+environ["IEX_TOKEN"] = "Tpk_35acd01b094b4239aa87879709679d22"
+environ["IEX_API_VERSION"] = "iexcloud-sandbox"
 
 
 def get_hist_data(ticker:str):
@@ -44,7 +46,9 @@ def get_today_price(ticker:str):
         return price
 
 def create_stock_obj(ticker:str,
-                     Session=sessionmaker(engine)):
+                    ):
+    engine = create_engine(getenv("SQLALCHEMY_DATABASE_URI"))
+    Session = sessionmaker(engine)
     today = datetime.now()
     with Session() as session:
         checker = session.query(Stock_obj). \
@@ -90,7 +94,9 @@ def create_stock_obj(ticker:str,
         print('creating................',id)
     return id
 
-def create_track_price_object(ticker:str,id:int,Session=sessionmaker(engine)):
+def create_track_price_object(ticker:str,id:int):
+    engine = create_engine(getenv("SQLALCHEMY_DATABASE_URI"))
+    Session = sessionmaker(engine)
     with Session() as session:
         check = session.query(Prices_tracking). \
             filter(Prices_tracking.ticker == ticker).one_or_none()

@@ -9,11 +9,15 @@ from application.misc.stocks_getter import get_data_for_plotting,get_today_price
 from application.models.stocks import create_index
 from iexfinance.utils.exceptions import IEXQueryError
 from flask import flash
-from application.models.database import engine
+from os import getenv
+from sqlalchemy import create_engine
+
+
 
 def filling_indexes_db(time0:datetime=datetime.now(),
-                       Session=sessionmaker(engine),
                        list_new_indexes=None):
+    engine = create_engine(getenv("SQLALCHEMY_DATABASE_URI"))
+    Session = sessionmaker(engine)
     current_day_prices = {}
     last_day_prices = {}
     data_historical = {}
@@ -69,8 +73,9 @@ def filling_indexes_db(time0:datetime=datetime.now(),
             data_historical[ticker] = index.history_data
     return  current_day_prices,   last_day_prices, count, data_historical
 
-def remove_indexes(*args,Session=sessionmaker(engine)):
-    print('deleting')
+def remove_indexes(*args):
+    engine = create_engine(getenv("SQLALCHEMY_DATABASE_URI"))
+    Session = sessionmaker(engine)
     if len(args) != 0:
         with Session() as session:
             for index in args:

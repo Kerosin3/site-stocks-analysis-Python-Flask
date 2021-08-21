@@ -39,6 +39,7 @@ from flask_migrate import Migrate
 from flask_wtf.csrf import CsrfProtect
 import os
 import pandas as pd
+from flask import current_app
 
 app = Flask(__name__)
 
@@ -56,10 +57,15 @@ elif workmode == 'test':
 else:
     raise EnvironmentError('Not right mode of initialization, aborting')
 app.config.from_object(config_app)
+# os.environ["SQLALCHEMY_DATABASE_URI"] = cu
 app.secret_key = 'super secret key_my'
 print(config_app.ENV)
-# print(app.root_path)
 
+with app.app_context():
+    print('DATABASE config URL IS:',current_app.config['SQLALCHEMY_DATABASE_URI'])
+    os.environ["SQLALCHEMY_DATABASE_URI"] = current_app.config['SQLALCHEMY_DATABASE_URI']
+# print(app.root_path)
+print('ENVIRONMENT VARIABLE db',os.getenv("SQLALCHEMY_DATABASE_URI"))
 app.register_blueprint(stocks_main_views)
 app.register_blueprint(stocks_main_app)
 db.init_app(app)

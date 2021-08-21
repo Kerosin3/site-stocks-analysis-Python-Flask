@@ -1,11 +1,14 @@
 from application.models.users import Users
 from sqlalchemy.orm import Session,sessionmaker,load_only
 from sqlalchemy import create_engine
-from application.models.database import engine
+from os import getenv
+# engine = create_engine(getenv("SQLALCHEMY_DATABASE_URI"))
+
 # engine = create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
 
 def create_user(username:str,
                 password:str='somepassword'):
+    engine = create_engine(getenv("SQLALCHEMY_DATABASE_URI"))
     Session = sessionmaker(engine)
     with Session() as session:
         id = None
@@ -26,6 +29,7 @@ def create_user(username:str,
             return None
 
 def get_user(username:str='some',id=None):
+    engine = create_engine(getenv("SQLALCHEMY_DATABASE_URI"))
     Session = sessionmaker(engine)
     if id is not None:
         if type(id) is int:
