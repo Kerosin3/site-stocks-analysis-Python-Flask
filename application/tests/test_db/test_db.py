@@ -14,7 +14,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session,sessionmaker,load_only,session
 from application.misc.stocks_getter import get_today_price,get_data_for_plotting
 # from application.models.database import filling_indexes_db
-
+from application.models.database import engine
 # engine = create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
 # Session = sessionmaker(engine)
 
