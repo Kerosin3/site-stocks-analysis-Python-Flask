@@ -35,7 +35,7 @@ def top_func(func):
         p.y_range = Range1d(low - 0.1 * diff, high + 0.1 * diff)
         inc = df.close > df.open
         dec = df.open > df.close
-        print(df)
+        # print(df)
         # print(pd.to_datetime(df["date"]))
         p.x_range.range_padding = 0.05
 

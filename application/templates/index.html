@@ -35,7 +35,7 @@
                         <div class="modal-body">
                             Please enter index ticker
                             <form method="post">
- <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                 <label for="stock_ticker">Index ticker:</label>
                                 <input
                                         id="stock_ticker_input"
@@ -69,7 +69,7 @@
                         <div class="modal-body">
                             Please enter index ticker
                             <form method="POST">
-                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                 <label for="stock_ticker">Index ticker:</label>
                                 <input
                                         id="stock_ticker_input"
@@ -95,8 +95,8 @@
             {#                <button type="button" class="btn btn-sm btn-outline-secondary">Add index</button>#}
             {#                <button type="button" class="btn btn-sm btn-outline-secondary">Remove Index</button>#}
             {#            </div>#}
-{#            <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Add random index</button>#}
-            <a href="{{ url_for('add_random') }}" class="btn btn-outline-primary" role="button">Add random Index</a>
+            {#            <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Add random index</button>#}
+            <a href="{{ url_for('add_random') }}" class="btn btn-info" role="button">Add random Index</a>
             </button>
         </div>
     </div>
@@ -109,7 +109,7 @@
             <ul class=flashes>
                 {% for message in messages %}
                     <div class="alert alert-success" role="alert">
-                        <strong>{{ message  }}</strong>
+                        <strong>{{ message }}</strong>
                     </div>
                 {% endfor %}
             </ul>
@@ -143,43 +143,36 @@
     <p id="index_indicator_first"></p>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-        function set_form(id, value) {
-            document.getElementById(id).innerHTML = value;
-            return true
-        }
-
-        function get_data(ticker0, index_ticker_form, index_indicator_form) {
-            var price_out = 0;
-            let ticker_out = '';
-            $(document).ready(function () {
-                $.ajax({
-                    dataType: "json",
+{#    <script>#}
+{#        function set_form(id, value) {#}
+{#            document.getElementById(id).innerHTML = value;#}
+{#            return true#}
+{#        }#}
+{##}
+{#        function get_data(ticker0, index_ticker_form, index_indicator_form) {#}
+{#            var price_out = 0;#}
+{#            let ticker_out = '';#}
+{#            $(document).ready(function () {#}
+{#                $.ajax({#}
+{#                    dataType: "json",#}
                     {#TODAY PRICE#}
-                    url: "/stocks/get_index_price/",
-                    data: 'ticker=' + ticker0,
-                    success: function (result) {
+{#                    url: "/stocks/get_index_price/",#}
+{#                    data: 'ticker=' + ticker0,#}
+{#                    success: function (result) {#}
                         {#alert(result.ticker + ' \t' + result.price)#}
-                        price_out = result.price
-                        ticker_out = result.ticker
-                        set_form(index_ticker_form, ticker_out)
-                        set_form(index_indicator_form, price_out)
-                    },
-                    error: function () {
-                        alert('Error occured');
-                    }
-                });
-            });
-        }
-
-        {#index_data = get_data(#}
-        {#    'ADBE',#}
-        {#    'index_ticker',#}
-        {#    'index_indicator')#}
-
-        {#document.getElementById('index_ticker').innerHTML = index_data[1];#}
-        {#document.getElementById('index_indicator').innerHTML = index_data[0];#}
-    </script>
+{#                        price_out = result.price#}
+{#                        ticker_out = result.ticker#}
+{#                        set_form(index_ticker_form, ticker_out)#}
+{#                        set_form(index_indicator_form, price_out)#}
+{#                    },#}
+{#                    error: function () {#}
+{#                        alert('Error occured');#}
+{#                    }#}
+{#                });#}
+{#            });#}
+{#        }#}
+{#        #}
+{#    </script>#}
     {#  https://stackoverflow.com/questions/3302702/jquery-return-value-using-ajax-result-on-success    #}
     <script type=text/javascript>
         $SCRIPT_ROOT = {{ request.script_root|tojson }};
@@ -191,33 +184,50 @@
     <script type=text/javascript>
         {#len1 = document.querySelector('meta[id="length1"]')['content']#}
         {#list_indexes = document.querySelector('meta[id="length1"]')['content']#}
-        var list_indexes = {{ list_indexes|tojson }};
-        list_indexes = JSON.parse(list_indexes);
-        $(document).ready(function () {
-            var id_stock = '#' + 'id_stock_ticker'
-            var id_stock = 'id_stock_price'
-            var id_stock_base = 'id_stock_price'
-            var count = 0
-            for (const [index_n, ticker_n] of Object.entries(list_indexes)) {
-                {#for (let ii = 0; ii < list_indexes.length ; ii++) {#}
-                var tik = ticker_n
-                $.getJSON({
-                    url: $SCRIPT_ROOT + '/stocks/get_index_price',
-                    data: {ticker: tik},
-                    success: function (data) {
-                        {#count += 1#}
-                        id_stock = id_stock_base + (index_n)
-                        {#console.log(typeof id_stock)#}
-                        {#console.log(id_stock)#}
-                        $(id_stock).text(data.ticker);
-                        console.log(data.ticker)
-                        console.log(data.price)
-                        document.getElementById(id_stock).innerHTML = data.price;
-                    }
-                });
-                {#return false; dont enable this!!!#}
+        function setting_toay_price(){
+            var list_indexes = {{ list_indexes|tojson }};
+            var cur_day_prices_open = {{ current_day_prices |tojson }}
+            list_indexes = JSON.parse(list_indexes);
+            $(document).ready(function () {
+                var id_stock = '#' + 'id_stock_ticker'
+                var id_stock = 'id_stock_price'
+                var id_stock_base = 'id_stock_price'
+
+                var id_change_today = '#' + 'id_change_today'
+                var id_change_today = 'id_change_today'
+                var id_change_today_base = 'id_change_today'
+                var count = 0
+                for (const [index_n, ticker_n] of Object.entries(list_indexes)) {
+                    {#for (let ii = 0; ii < list_indexes.length ; ii++) {#}
+                    var tik = ticker_n
+                    $.getJSON({
+                        url: $SCRIPT_ROOT + '/stocks/get_index_price',
+                        data: {ticker: tik},
+                        success: function (data) {
+                            {#count += 1#}
+                            id_stock = id_stock_base + (index_n)
+                            id_stock_change = id_change_today_base + (index_n)
+
+                            var change = (  ((data.price - cur_day_prices_open[ticker_n] )  / cur_day_prices_open[ticker_n]  )*100).toFixed(2);
+                            document.getElementById(id_stock).innerHTML = data.price.toFixed(2);
+                            document.getElementById(id_stock_change).innerHTML = change;
+                        }
+                    });
+                    {#return false; dont enable this!!!#}
+                }
+            });
             }
-        });
+function yourFunction(){
+    // do whatever you like here
+
+    setTimeout(setting_toay_price, 1000);
+    var xxxxx = {{ current_day_prices |tojson }};
+    var second = xxxxx["ADBE"];
+    console.log(second)
+}
+
+yourFunction();
+        {#setting_toay_price()#}
     </script>
 
 
@@ -227,7 +237,8 @@
             <th scope="col">№</th>
             <th scope="col">ticker</th>
             <th scope="col">index open</th>
-            <th scope="col">Currend moment price</th>
+            <th scope="col">Current moment price</th>
+            <th scope="col">Today change (%)</th>
             <th scope="col">last day close</th>
             <th scope="col">price change (d/d,%)</th>
             <th scope="col">seekingalpha</th>
@@ -237,6 +248,7 @@
         {% for ticker,valueP in current_day_prices.items() %}
             {% set id_stock_ticker = 'id_stock_ticker' ~ loop.index %}
             {% set id_stock_price = 'id_stock_price' ~ loop.index %}
+            {% set change_today = 'id_change_today' ~ loop.index %}
             {#            {% set id_stock_price = 'id_stock_price' ~ loop.index %}#}
 
             {% set diff = (last_day_prices[ticker] - current_day_prices[ticker]) / (last_day_prices[ticker]  / 100) %}
@@ -248,8 +260,9 @@
                 </td>
                 {#                <td><a href="{{ url_for('plot', index_ticker=ticker) }}"> {{ ticker }} </a></td>#}
                 {#                <td>{{ ticker }}</td>#}
-                <td> {{ current_day_prices[ticker] }}</td>
+                <td > {{ current_day_prices[ticker] }}</td>
                 <td id= {{ id_stock_price }}>?</td>
+                <td id = {{ change_today }}>?</tdid>
                 <td>{{ last_day_prices[ticker] }} </td>
                 {#                <td>{{'%0.2f' % diff|float}}%</td>#}
                 <td class="{{ 'red' if diff < 0 else 'green' }}">{{ '%0.2f' % diff|float }}</td>

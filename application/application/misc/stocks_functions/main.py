@@ -1,3 +1,4 @@
+# import app
 from application.models.db_stocks import Stock_obj,Stock_data,Prices_tracking
 from application.models.database import db
 from sqlalchemy import create_engine
@@ -11,6 +12,7 @@ from iexfinance.stocks import Stock,get_historical_data
 
 
 engine = create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
+# engine = create_engine(app.config_app.SQLALCHEMY_DATABASE_URI)
 os.environ["IEX_TOKEN"] = "Tpk_35acd01b094b4239aa87879709679d22"
 os.environ["IEX_API_VERSION"] = "iexcloud-sandbox"
 

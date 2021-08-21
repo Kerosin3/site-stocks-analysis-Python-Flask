@@ -51,15 +51,13 @@
 
 
 <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Company name</a>
+    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Anexander V project</a>
     <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
             data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
             aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-{#    <p class="text-secondary">.text-secondary</p>#}
-        <h1 class="text-primary text-lg-end " >Helloo {{ username }}</h1>
-{#    <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">#}
+        <h1 class="text-warning text-lg-end " >Hello {{ username }}</h1>
     <div class="navbar-nav">
         <div class="nav-item text-nowrap">
             <a class="nav-link px-3" href="{{ url_for('logout') }}">Sign out</a>
@@ -68,11 +66,7 @@
 </header>
 
 <body>
-{#<div class="container">#}
-{##}
-{##}
-{#            #}
-{#</div>#}
+#}
 
 <div class="container-fluid">
     <div class="row">
@@ -111,38 +105,38 @@
                     </li>
                 </ul>
 
-                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                    <span>Saved reports</span>
-                    <a class="link-secondary" href="#" aria-label="Add a new report">
-                        <span data-feather="plus-circle"></span>
-                    </a>
-                </h6>
-                <ul class="nav flex-column mb-2">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span data-feather="file-text"></span>
-                            Current month
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span data-feather="file-text"></span>
-                            Last quarter
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span data-feather="file-text"></span>
-                            Social engagement
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span data-feather="file-text"></span>
-                            Year-end sale
-                        </a>
-                    </li>
-                </ul>
+{#                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">#}
+{#                    <span>Saved reports</span>#}
+{#                    <a class="link-secondary" href="#" aria-label="Add a new report">#}
+{#                        <span data-feather="plus-circle"></span>#}
+{#                    </a>#}
+{#                </h6>#}
+{#                <ul class="nav flex-column mb-2">#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="#">#}
+{#                            <span data-feather="file-text"></span>#}
+{#                            Current month#}
+{#                        </a>#}
+{#                    </li>#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="#">#}
+{#                            <span data-feather="file-text"></span>#}
+{#                            Last quarter#}
+{#                        </a>#}
+{#                    </li>#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="#">#}
+{#                            <span data-feather="file-text"></span>#}
+{#                            Social engagement#}
+{#                        </a>#}
+{#                    </li>#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="#">#}
+{#                            <span data-feather="file-text"></span>#}
+{#                            Year-end sale#}
+{#                        </a>#}
+{#                    </li>#}
+{#                </ul>#}
             </div>
         </nav>
 
@@ -182,7 +176,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"
         integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha"
         crossorigin="anonymous"></script>
-<script src="{{ url_for('static', filename='scr/dashboard.js') }}"></script>
+{#<script src="{{ url_for('static', filename='scr/dashboard.js') }}"></script>#}
 {#<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>#}
 {#<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>#}
 <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>

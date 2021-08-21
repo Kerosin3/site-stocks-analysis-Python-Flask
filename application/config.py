@@ -40,7 +40,7 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
     SQLALCHEMY_ECHO = True
     ENV = 'development'
     SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI
@@ -51,4 +51,8 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     TESTING = True
     DEBUG = True
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
+    SQLALCHEMY_ECHO = True
+    ENV = 'development'
     ENV = 'testing'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://USER:TEST@localhost:5430/APPLICATION_DB_TEST'

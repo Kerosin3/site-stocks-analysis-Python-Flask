@@ -1,10 +1,10 @@
 from iexfinance.refdata import get_symbols
 import pandas as pd
 import os
+# from app import app
 
 def get_all_symbols():
-    cwd = os.getcwd()
-    path = os.path.join(cwd, "application",'misc','iex')
+    path = os.path.join(app.root_path, "application",'misc','iex')
     print('==============',path)
     all_obj = get_symbols()[:]
     # print(path + 'all_symbols',type(all_obj))

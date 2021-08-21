@@ -1,3 +1,4 @@
+import config
 import pytest
 from app import app
 from application.models.database import db
@@ -9,7 +10,9 @@ from application.misc.stocks_functions import create_stock_obj
 from .conftest import myfixture
 from application.misc.stocks_functions import get_hist_data
 from application.misc.stocks_functions import create_stock_obj
-engine = create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
+
+
+engine = create_engine(config.TestingConfig.SQLALCHEMY_DATABASE_URI)
 import pandas as pd
 Session = sessionmaker(engine)
 
@@ -24,7 +27,7 @@ def client():
 
 @pytest.fixture(scope="session")
 def engine():
-    return create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
+    return create_engine(config.TestingConfig.SQLALCHEMY_DATABASE_URI)
 
 @pytest.fixture
 def test_data_fixture(myfixture):
