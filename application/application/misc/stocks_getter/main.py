@@ -45,6 +45,7 @@ def check_if_exists(func):
             return None
             # raise NoSuchStock
         except ValueError:
+            print('No such stock')
             raise NoSuchStock
         except:
             raise SomethingBadHappened('I dont know')

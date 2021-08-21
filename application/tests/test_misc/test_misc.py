@@ -26,7 +26,7 @@ def test_stock_getter_historical_data():
     ticker = 'TSLA'
     prices,volume = get_data_historical(ticker)
     for date,price in prices.items():
-        print(f'price at date {date} was {price}')
+        # print(f'price at date {date} was {price}')
         assert type(date) == Timestamp
         assert type(price) == float or type(price) == int
 
@@ -61,6 +61,7 @@ def test_get_today_prices_several():
     a = get_today_prices_several(tickers)
     print(a)
 
+@pytest.mark.skip(reason="authentication system ")
 def test_get_today_prices_several_view(client):
     tickers = ['TSLA', 'NVDA', 'ADBE']
     out = {'several_tickers':tickers}
@@ -69,6 +70,7 @@ def test_get_today_prices_several_view(client):
     print('data is ',rv.data)
     assert rv.status_code == 200
 
+@pytest.mark.skip(reason="authentication system")
 def test_indexes_requests_view(client):
     rv = client.get('/')
     print('data is ',rv.data)
