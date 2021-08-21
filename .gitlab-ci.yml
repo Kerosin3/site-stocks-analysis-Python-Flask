@@ -1,0 +1,40 @@
+image: python:3.9.6
+
+stages:          # List of stages for jobs, and their order of execution
+ # - build
+  - test
+  - deploy
+services:
+  - postgres:12
+variables:
+  POSTGRES_DB: APPLICATION_DB
+  POSTGRES_USER: USER
+  POSTGRES_PASSWORD: PASSWORD
+  PG_HOST: postgres
+  SQLALCHEMY_DATABASE_URI: postgresql://USER:PASSWORD@postgres:5432/APPLICATION_DB
+  test_0: 'just some test variable'
+  root_dir: application
+
+unit-test-job:   # This job runs in the test stage.
+  stage: test    # It only starts when the job in the build stage completes successfully.
+  before_script:
+    - python -v
+    - cd $root_dir
+    - python -m pip install poetry
+    - poetry config virtualenvs.create false
+    - poetry update
+    - flask db init
+    - flask db migrate
+    - flask db upgrade
+  script:
+    - echo "Hello, $GITLAB_USER_LOGIN!"
+    - echo "Commit message is $CI_COMMIT_MESSAGE"
+    - echo "here is your test variable $test_0"
+    - pytest -s -vv -rsx --color=yes tests/test_iex tests/test_db
+
+
+deploy-job:      # This job runs in the deploy stage.
+  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
+  script:
+    - echo "Deploying application..."
+    - echo "Application successfully deployed."
