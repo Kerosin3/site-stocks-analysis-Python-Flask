@@ -10,9 +10,9 @@ from .conftest import username_fixture
 from application.models.users import Users
 from application.misc.user_db_funct import create_user
 from application.misc.stocks_functions import create_track_price_object
+from os import getenv
 
-engine = create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
-Session = sessionmaker(engine)
+
 
 
 @pytest.fixture
@@ -26,11 +26,12 @@ def client():
 
 @pytest.fixture(scope="session")
 def engine():
-    return create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
+    return create_engine(getenv("SQLALCHEMY_DATABASE_URI"))
 
 
 @pytest.fixture
-def test_data_fixture(username_fixture):
+def test_data_fixture(username_fixture,engine):
+    Session = sessionmaker(engine)
     username = username_fixture
     with Session() as session:
         userlist = session.query(Users).all()
@@ -52,7 +53,8 @@ def test_data_fixture(username_fixture):
             print(f'deleting user')
 
 
-def test_user_creation(client, username_fixture, test_data_fixture):
+def test_user_creation(client, engine, username_fixture, test_data_fixture):
+    Session = sessionmaker(engine)
     with Session() as session:
         user_to_create = session.query(Users). \
             filter(Users.username == username_fixture).one_or_none()
@@ -60,7 +62,8 @@ def test_user_creation(client, username_fixture, test_data_fixture):
         print(user_to_create)
 
 
-def test_Prices_tracking(client, username_fixture, test_data_fixture):
+def test_Prices_tracking(client, engine, username_fixture, test_data_fixture):
+    Session = sessionmaker(engine)
     with Session() as session:
         assert (create_track_price_object('kaka', test_data_fixture)) is not None
         assert (create_track_price_object('trtr', test_data_fixture)) is not None
@@ -75,7 +78,8 @@ def test_Prices_tracking(client, username_fixture, test_data_fixture):
                    filter(Prices_tracking.user_related == test_data_fixture).count() == 2
 
 
-def test_delete_alert_test_integrity(client, username_fixture):
+def test_delete_alert_test_integrity(client, username_fixture,engine):
+    Session = sessionmaker(engine)
     id_fix = create_user(username_fixture)
     id = create_track_price_object('kaka', id_fix)
     assert id is not None
@@ -98,7 +102,8 @@ def test_delete_alert_test_integrity(client, username_fixture):
         session.commit()
 
 
-def test_acessing_valuess(client, username_fixture, test_data_fixture):
+def test_acessing_valuess(client, engine, username_fixture, test_data_fixture):
+    Session = sessionmaker(engine)
     id1 = create_track_price_object('kaka', test_data_fixture)
     id2 = create_track_price_object('gaga', test_data_fixture)
     assert id1 is not None

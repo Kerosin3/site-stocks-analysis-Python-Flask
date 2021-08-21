@@ -11,10 +11,10 @@ from application.models.users import Users
 from application.misc.stocks_functions import create_stock_obj
 from application.misc.user_db_funct import create_user
 # from application.misc.stocks_functions import get_historical_data
+from os import getenv
 
-engine = create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
 
-Session = sessionmaker(engine)
+
 
 # def pytest_configure(config):
 #     config.my_symbol = 'aaaaaa'
@@ -22,17 +22,17 @@ Session = sessionmaker(engine)
 @pytest.fixture
 def client():
     # engine = create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
-    # Session = sessionmaker(engine)
     with app.test_client() as test_client:
         with app.app_context():
             yield test_client
 
 @pytest.fixture(scope="session")
 def engine():
-    return create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
+    return create_engine(getenv("SQLALCHEMY_DATABASE_URI"))
 
 @pytest.fixture
-def test_delete_users_and_obj():
+def test_delete_users_and_obj(engine):
+    Session = sessionmaker(engine)
     with Session() as session:
         full_data = session.query(Stock_obj).all()
         for obj in full_data:
@@ -46,9 +46,10 @@ def test_delete_users_and_obj():
 
 
 @pytest.fixture
-def test_data_fixture(myfixture,id_fixture):
+def test_data_fixture(myfixture,id_fixture,engine):
     ticker = myfixture
     id_fix = None
+    Session = sessionmaker(engine)
     with Session() as session:
         full_data = session.query(Stock_obj).all()
         for obj in full_data:
@@ -68,15 +69,17 @@ def test_data_fixture(myfixture,id_fixture):
 
 
 
-def test_id(client,test_data_fixture,myfixture,id_fixture):
+def test_id(client,test_data_fixture,myfixture,id_fixture,engine):
     print('testing stock with ID:',test_data_fixture)
+    Session = sessionmaker(engine)
     with Session() as session:
         test_data = session.query(Stock_obj). \
             filter(Stock_obj.id == test_data_fixture).one_or_none()
         if test_data is not None:
             assert test_data.id == test_data_fixture
 
-def test_deleting_parent(client,test_data_fixture,myfixture):
+def test_deleting_parent(client,test_data_fixture,myfixture,engine):
+    Session = sessionmaker(engine)
     with Session() as session:
         print('testign stock with ID:',test_data_fixture)
         data_stock = session.query(Stock_obj).\
@@ -97,8 +100,9 @@ def test_deleting_parent(client,test_data_fixture,myfixture):
             filter(Stock_obj.id == test_data_fixture).one_or_none()
         assert stock_ob is None
 
-def test_acessing_values(client,test_data_fixture,myfixture):
+def test_acessing_values(client,test_data_fixture,myfixture,engine):
     price = 666
+    Session = sessionmaker(engine)
     with Session() as session:
         print('testign stock with ID:', test_data_fixture)
         data_stock_obj = session.query(Stock_obj). \
@@ -112,7 +116,8 @@ def test_acessing_values(client,test_data_fixture,myfixture):
         out = (data_stock_obj.Stock_data.today_price)
         assert out == price
 
-def test_deleting__just_user(client,test_delete_users_and_obj):
+def test_deleting__just_user(client,test_delete_users_and_obj,engine):
+    Session = sessionmaker(engine)
     with Session() as session:
         id = create_stock_obj('ADBE')
         print('id is ===== ',id)
