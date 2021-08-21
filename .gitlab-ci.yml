@@ -31,7 +31,7 @@ unit-test-job:   # This job runs in the test stage.
     - echo "Hello, $GITLAB_USER_LOGIN!"
     - echo "Commit message is $CI_COMMIT_MESSAGE"
     - echo "here is your test variable $test_0"
-    - pytest -s -vv -rsx --cov=application --cov-report=html:$COVERAGE_DIR tests/test_iex tests/test_db
+    - pytest -s -vv -rsx --cov=application --cov-report=html:$COVERAGE_DIR tests/test_db tests/test_functions_db_stocks tests/test_iex tests/test_misc tests/test_stocks tests/test_users_db tests/test_views
   artifacts:
     name: "coverage-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
     paths: 
