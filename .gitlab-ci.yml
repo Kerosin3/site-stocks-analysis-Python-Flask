@@ -14,6 +14,7 @@ variables:
   SQLALCHEMY_DATABASE_URI: postgresql://USER:PASSWORD@postgres:5432/APPLICATION_DB
   test_0: 'just some test variable'
   root_dir: application
+  COVERAGE_DIR: "coverage-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
 
 unit-test-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
@@ -30,8 +31,13 @@ unit-test-job:   # This job runs in the test stage.
     - echo "Hello, $GITLAB_USER_LOGIN!"
     - echo "Commit message is $CI_COMMIT_MESSAGE"
     - echo "here is your test variable $test_0"
-    - pytest -s -vv -rsx --color=yes tests/test_iex tests/test_db
-
+    - pytest -s -vv -rsx --cov=application --cov-report=html:$COVERAGE_DIR tests/test_iex tests/test_db
+  artifacts:
+    name: "coverage-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
+    paths: 
+      - $root_dir/$COVERAGE_DIR
+    expire_in: 1 week
+    when: on_success
 
 deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
