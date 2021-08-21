@@ -97,7 +97,8 @@ all_symbols_iex = get_all_indexes()
 def load_user(user_id):
     user_id = int(user_id)
     user = get_user(id=user_id)
-    print('loggined as', user.username)
+    if user is not None:
+        print('loggined as', user.username)
     return user
 
 

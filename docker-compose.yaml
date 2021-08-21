@@ -21,3 +21,14 @@ services:
       - ./db_data/pg-data:/var/lib/postgresql/data
     ports:
       - 5432:5432
+
+  database_application_TEST:
+    image: postgres:12
+    environment:
+      POSTGRES_DB: "APPLICATION_DB_TEST"
+      POSTGRES_USER: "USER"
+      POSTGRES_PASSWORD: "TEST"
+    volumes:
+      - ./db_data_test/pg-data:/var/lib/postgresql/data
+    ports:
+      - 5430:5432
