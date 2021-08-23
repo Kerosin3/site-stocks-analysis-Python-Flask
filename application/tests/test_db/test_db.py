@@ -1,5 +1,6 @@
 import pytest
-from app import app
+# from app import app
+from flask import Flask
 from application.models.database import db
 from application.models.db_functions import filling_indexes_db,remove_indexes
 # import application.models.database
@@ -14,8 +15,18 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session,sessionmaker,load_only,session
 from application.misc.stocks_getter import get_today_price,get_data_for_plotting
 # from application.models.database import filling_indexes_db
-from os import getenv
+from os import getenv,environ
+import config
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
+environ["FLASK_ENV"] = "test"
+config_app = config.TestingConfig
+app = Flask(__name__)
+with app.app_context():
+    app.config.from_object(config_app)
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 @pytest.fixture
 def client():
