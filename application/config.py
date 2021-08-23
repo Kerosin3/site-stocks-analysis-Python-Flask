@@ -8,6 +8,10 @@ class Config(object):  # default
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI
+    SQLALCHEMY_BINDS = {
+        'test_db': 'postgresql://USER:TEST@localhost:5430/APPLICATION_DB_TEST',
+    }
+    SOME_OTHER_VAR = 'Some value'
     JOBS = [
         {
             "id": "job1",

@@ -64,12 +64,15 @@ print(config_app.ENV)
 with app.app_context():
     print('DATABASE config URL IS:',current_app.config['SQLALCHEMY_DATABASE_URI'])
     os.environ["SQLALCHEMY_DATABASE_URI"] = current_app.config['SQLALCHEMY_DATABASE_URI']
+    print('some variable:::::', current_app.config['SOME_OTHER_VAR'])
 # print(app.root_path)
 print('ENVIRONMENT VARIABLE db',os.getenv("SQLALCHEMY_DATABASE_URI"))
+
 app.register_blueprint(stocks_main_views)
 app.register_blueprint(stocks_main_app)
-db.init_app(app)
-migrate = Migrate(app, db)
+with app.app_context():
+    db.init_app(app)
+    migrate = Migrate(app, db)
 
 bcrypt = Bcrypt(app)
 # app.config['SESSION_COOKIE_SECURE'] = False
