@@ -13,8 +13,6 @@ from application.misc.stocks_functions import create_track_price_object
 from os import getenv
 
 
-
-
 @pytest.fixture
 def client():
     # engine = create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
@@ -30,7 +28,7 @@ def engine():
 
 
 @pytest.fixture
-def test_data_fixture(username_fixture,engine):
+def test_data_fixture(username_fixture, engine):
     Session = sessionmaker(engine)
     username = username_fixture
     with Session() as session:
@@ -78,7 +76,7 @@ def test_Prices_tracking(client, engine, username_fixture, test_data_fixture):
                    filter(Prices_tracking.user_related == test_data_fixture).count() == 2
 
 
-def test_delete_alert_test_integrity(client, username_fixture,engine):
+def test_delete_alert_test_integrity(client, username_fixture, engine):
     Session = sessionmaker(engine)
     id_fix = create_user(username_fixture)
     id = create_track_price_object('kaka', id_fix)

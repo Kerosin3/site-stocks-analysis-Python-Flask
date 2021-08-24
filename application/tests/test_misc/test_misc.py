@@ -1,12 +1,14 @@
 # from application import a
 # from application import app
-from application.misc import get_data_historical,get_lastday_data,get_today_price,get_today_prices_several,get_historical_for_graph
+from application.misc import get_data_historical, get_lastday_data, get_today_price, get_today_prices_several, \
+    get_historical_for_graph
 import pytest
 from pandas._libs.tslibs.timestamps import Timestamp
-from iexfinance.utils.exceptions import  IEXQueryError
-from application.misc import ServerExeption,SomethingBadHappened,NoSuchStock
+from iexfinance.utils.exceptions import IEXQueryError
+from application.misc import ServerExeption, SomethingBadHappened, NoSuchStock
 from app import app
 from bokeh.plotting import show
+
 
 @pytest.fixture
 def client():
@@ -14,21 +16,24 @@ def client():
         with app.app_context():
             yield test_client
 
+
 def test_stock_getter_lastday():
     ticker = 'TSLA'
-    price,volume = get_lastday_data(ticker)
+    price, volume = get_lastday_data(ticker)
     # print(price,volume)
     assert price is not None
     assert type(price) == float
     assert type(volume) == int
 
+
 def test_stock_getter_historical_data():
     ticker = 'TSLA'
-    prices,volume = get_data_historical(ticker)
-    for date,price in prices.items():
+    prices, volume = get_data_historical(ticker)
+    for date, price in prices.items():
         # print(f'price at date {date} was {price}')
         assert type(date) == Timestamp
         assert type(price) == float or type(price) == int
+
 
 def test_today_price():
     ticker = 'TSLA'
@@ -36,11 +41,13 @@ def test_today_price():
     # print('current price is', price)
     assert type(price) == float or type(price) == int
 
+
 def test_today_price_not_existsable_stock():
     '''IEXQueryError error'''
     ticker = 'xxxx'
     price = get_today_price(ticker)
     assert price == None
+
 
 def test_today_price_not_existsable_stock_failure():
     """
@@ -51,28 +58,31 @@ def test_today_price_not_existsable_stock_failure():
     price = get_today_price(ticker)
     assert price is not None
 
+
 def test_today_price_not_existsable_stock_failure_unknown():
     ticker = ''
     with pytest.raises(NoSuchStock):
         price = get_today_price(ticker)
 
+
 def test_get_today_prices_several():
-    tickers = ['TSLA','NVDA','ADBE']
+    tickers = ['TSLA', 'NVDA', 'ADBE']
     a = get_today_prices_several(tickers)
     print(a)
+
 
 @pytest.mark.skip(reason="authentication system ")
 def test_get_today_prices_several_view(client):
     tickers = ['TSLA', 'NVDA', 'ADBE']
-    out = {'several_tickers':tickers}
+    out = {'several_tickers': tickers}
     rv = client.get('/stocks/get_indexes_prices/',
-                    query_string = out)
-    print('data is ',rv.data)
+                    query_string=out)
+    print('data is ', rv.data)
     assert rv.status_code == 200
+
 
 @pytest.mark.skip(reason="authentication system")
 def test_indexes_requests_view(client):
     rv = client.get('/')
-    print('data is ',rv.data)
+    print('data is ', rv.data)
     assert rv.status_code < 400
-

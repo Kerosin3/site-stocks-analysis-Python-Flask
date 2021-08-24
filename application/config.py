@@ -1,4 +1,4 @@
-from os import getenv,environ
+from os import getenv, environ
 
 SQLALCHEMY_DATABASE_URI = getenv("SQLALCHEMY_DATABASE_URI", 'postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
 
@@ -37,6 +37,7 @@ class Config(object):  # default
     ]
     SCHEDULER_API_ENABLED = True
 
+
 class ProductionConfig(Config):
     DEBUG = False
     ENV = 'production'
@@ -51,13 +52,10 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI
 
 
-
-
 class TestingConfig(Config):
     TESTING = True
     DEBUG = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     SQLALCHEMY_ECHO = True
-    ENV = 'development'
     ENV = 'testing'
     SQLALCHEMY_DATABASE_URI = 'postgresql://USER:TEST@localhost:5430/APPLICATION_DB_TEST'

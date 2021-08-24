@@ -1,21 +1,27 @@
-from flask import request, Blueprint,render_template,jsonify,g,redirect,flash,url_for
+from flask import request, Blueprint, render_template, jsonify, g, redirect, flash, url_for
 from application.misc.user_db_funct.users import create_user
 from sqlalchemy import create_engine
 from datetime import date
 from datetime import datetime, timedelta
 from application.misc.stocks_functions import create_stock_obj
 from application.models.users import Users
-from sqlalchemy.orm import Session,sessionmaker,load_only,session
-engine = create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')
-Session = sessionmaker(engine)
+from sqlalchemy.orm import Session, sessionmaker, load_only, session
+from flask import current_app
+from flask_login import (
+    login_user, login_manager,
+    logout_user, login_required, UserMixin, current_user, LoginManager
+)
 
 stocks_main_app = Blueprint("stocks_main_app",
-                       __name__,
-                       url_prefix="/stocks_tracking"
-                       )
+                            __name__,
+                            url_prefix="/stocks_tracking"
+                            )
 
-@stocks_main_app.route("/index_stocks/", methods=["GET",'POST'],endpoint='index_stocks')
+
+@stocks_main_app.route("/index_stocks/", methods=["GET", 'POST'], endpoint='index_stocks')
+@login_required
 def index_stocks():
+    return render_template('stocks/stocks_index.html', username=current_user.username)
     # cur_username =  str(g.user.username)
     # user = create_user(cur_username, '12345')
     # if user is None: #user exists
@@ -38,4 +44,15 @@ def index_stocks():
     #
     # else:
     #     return  redirect(url_for('login'))
-    return render_template('stocks/stocks_index.html')
+
+
+@stocks_main_app.route("/crypto_dynamics/", methods=["GET", 'POST'], endpoint='crypto_dynamics')
+@login_required
+def crypto_dynamics():
+    return render_template('stocks/stocks_index.html', username=current_user.username)
+
+
+@stocks_main_app.route("/news/", methods=["GET", 'POST'], endpoint='news')
+@login_required
+def news():
+    return render_template('stocks/stocks_index.html', username=current_user.username)

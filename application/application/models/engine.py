@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from os import getenv,environ
+from os import getenv, environ
 from flask import current_app
 # from app import app
 # engine = create_engine('postgresql://USER:PASSWORD@localhost:5432/APPLICATION_DB')

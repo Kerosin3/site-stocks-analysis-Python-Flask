@@ -143,36 +143,36 @@
     <p id="index_indicator_first"></p>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-{#    <script>#}
-{#        function set_form(id, value) {#}
-{#            document.getElementById(id).innerHTML = value;#}
-{#            return true#}
-{#        }#}
-{##}
-{#        function get_data(ticker0, index_ticker_form, index_indicator_form) {#}
-{#            var price_out = 0;#}
-{#            let ticker_out = '';#}
-{#            $(document).ready(function () {#}
-{#                $.ajax({#}
-{#                    dataType: "json",#}
-                    {#TODAY PRICE#}
-{#                    url: "/stocks/get_index_price/",#}
-{#                    data: 'ticker=' + ticker0,#}
-{#                    success: function (result) {#}
-                        {#alert(result.ticker + ' \t' + result.price)#}
-{#                        price_out = result.price#}
-{#                        ticker_out = result.ticker#}
-{#                        set_form(index_ticker_form, ticker_out)#}
-{#                        set_form(index_indicator_form, price_out)#}
-{#                    },#}
-{#                    error: function () {#}
-{#                        alert('Error occured');#}
-{#                    }#}
-{#                });#}
-{#            });#}
-{#        }#}
-{#        #}
-{#    </script>#}
+    {#    <script>#}
+    {#        function set_form(id, value) {#}
+    {#            document.getElementById(id).innerHTML = value;#}
+    {#            return true#}
+    {#        }#}
+    {##}
+    {#        function get_data(ticker0, index_ticker_form, index_indicator_form) {#}
+    {#            var price_out = 0;#}
+    {#            let ticker_out = '';#}
+    {#            $(document).ready(function () {#}
+    {#                $.ajax({#}
+    {#                    dataType: "json",#}
+    {#TODAY PRICE#}
+    {#                    url: "/stocks/get_index_price/",#}
+    {#                    data: 'ticker=' + ticker0,#}
+    {#                    success: function (result) {#}
+    {#alert(result.ticker + ' \t' + result.price)#}
+    {#                        price_out = result.price#}
+    {#                        ticker_out = result.ticker#}
+    {#                        set_form(index_ticker_form, ticker_out)#}
+    {#                        set_form(index_indicator_form, price_out)#}
+    {#                    },#}
+    {#                    error: function () {#}
+    {#                        alert('Error occured');#}
+    {#                    }#}
+    {#                });#}
+    {#            });#}
+    {#        }#}
+    {#        #}
+    {#    </script>#}
     {#  https://stackoverflow.com/questions/3302702/jquery-return-value-using-ajax-result-on-success    #}
     <script type=text/javascript>
         $SCRIPT_ROOT = {{ request.script_root|tojson }};
@@ -184,10 +184,11 @@
     <script type=text/javascript>
         {#len1 = document.querySelector('meta[id="length1"]')['content']#}
         {#list_indexes = document.querySelector('meta[id="length1"]')['content']#}
-        function setting_toay_price(){
+
+        function setting_toay_price() {
             var list_indexes = {{ list_indexes|tojson }};
             var cur_day_prices_open = {{ current_day_prices |tojson }}
-            list_indexes = JSON.parse(list_indexes);
+                list_indexes = JSON.parse(list_indexes);
             $(document).ready(function () {
                 var id_stock = '#' + 'id_stock_ticker'
                 var id_stock = 'id_stock_price'
@@ -208,7 +209,7 @@
                             id_stock = id_stock_base + (index_n)
                             id_stock_change = id_change_today_base + (index_n)
 
-                            var change = (  ((data.price - cur_day_prices_open[ticker_n] )  / cur_day_prices_open[ticker_n]  )*100).toFixed(2);
+                            var change = (((data.price - cur_day_prices_open[ticker_n]) / cur_day_prices_open[ticker_n]) * 100).toFixed(2);
                             document.getElementById(id_stock).innerHTML = data.price.toFixed(2);
                             document.getElementById(id_stock_change).innerHTML = change;
                         }
@@ -216,17 +217,18 @@
                     {#return false; dont enable this!!!#}
                 }
             });
-            }
-function yourFunction(){
-    // do whatever you like here
+        }
 
-    setTimeout(setting_toay_price, 1000);
-    var xxxxx = {{ current_day_prices |tojson }};
-    var second = xxxxx["ADBE"];
-    console.log(second)
-}
+        function yourFunction() {
+            // do whatever you like here
 
-yourFunction();
+            setTimeout(setting_toay_price, 1000);
+            var xxxxx = {{ current_day_prices |tojson }};
+            var second = xxxxx["ADBE"];
+            console.log(second)
+        }
+
+        yourFunction();
         {#setting_toay_price()#}
     </script>
 
@@ -260,9 +262,9 @@ yourFunction();
                 </td>
                 {#                <td><a href="{{ url_for('plot', index_ticker=ticker) }}"> {{ ticker }} </a></td>#}
                 {#                <td>{{ ticker }}</td>#}
-                <td > {{ current_day_prices[ticker] }}</td>
+                <td> {{ current_day_prices[ticker] }}</td>
                 <td id= {{ id_stock_price }}>?</td>
-                <td id = {{ change_today }}>?</tdid>
+                <td id= {{ change_today }}>?</tdid>
                 <td>{{ last_day_prices[ticker] }} </td>
                 {#                <td>{{'%0.2f' % diff|float}}%</td>#}
                 <td class="{{ 'red' if diff < 0 else 'green' }}">{{ '%0.2f' % diff|float }}</td>

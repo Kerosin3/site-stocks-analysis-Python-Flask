@@ -3,17 +3,15 @@ from app import app
 from application.models.database import db
 from sqlalchemy import create_engine
 from application.models.users import Users
-from application.models.db_stocks import Stock_obj,Stock_data,Prices_tracking
-from sqlalchemy.orm import Session,sessionmaker,load_only,session
+from application.models.db_stocks import Stock_obj, Stock_data, Prices_tracking
+from sqlalchemy.orm import Session, sessionmaker, load_only, session
 from application.misc.stocks_functions import create_stock_obj
-from .conftest import myfixture,id_fixture
+from .conftest import myfixture, id_fixture
 from application.models.users import Users
 from application.misc.stocks_functions import create_stock_obj
 from application.misc.user_db_funct import create_user
 # from application.misc.stocks_functions import get_historical_data
 from os import getenv
-
-
 
 
 # def pytest_configure(config):
@@ -26,9 +24,11 @@ def client():
         with app.app_context():
             yield test_client
 
+
 @pytest.fixture(scope="session")
 def engine():
     return create_engine(getenv("SQLALCHEMY_DATABASE_URI"))
+
 
 @pytest.fixture
 def test_delete_users_and_obj(engine):
@@ -46,7 +46,7 @@ def test_delete_users_and_obj(engine):
 
 
 @pytest.fixture
-def test_data_fixture(myfixture,id_fixture,engine):
+def test_data_fixture(myfixture, id_fixture, engine):
     ticker = myfixture
     id_fix = None
     Session = sessionmaker(engine)
@@ -56,7 +56,7 @@ def test_data_fixture(myfixture,id_fixture,engine):
             session.delete(obj)
             session.commit()
     id_fix = create_stock_obj(ticker)
-    print('created stock obj with id',id_fix)
+    print('created stock obj with id', id_fix)
     yield id_fix
     with Session() as session:
         test_data = session.query(Stock_obj). \
@@ -68,9 +68,8 @@ def test_data_fixture(myfixture,id_fixture,engine):
     # db.session.commit()
 
 
-
-def test_id(client,test_data_fixture,myfixture,id_fixture,engine):
-    print('testing stock with ID:',test_data_fixture)
+def test_id(client, test_data_fixture, myfixture, id_fixture, engine):
+    print('testing stock with ID:', test_data_fixture)
     Session = sessionmaker(engine)
     with Session() as session:
         test_data = session.query(Stock_obj). \
@@ -78,18 +77,19 @@ def test_id(client,test_data_fixture,myfixture,id_fixture,engine):
         if test_data is not None:
             assert test_data.id == test_data_fixture
 
-def test_deleting_parent(client,test_data_fixture,myfixture,engine):
+
+def test_deleting_parent(client, test_data_fixture, myfixture, engine):
     Session = sessionmaker(engine)
     with Session() as session:
-        print('testign stock with ID:',test_data_fixture)
-        data_stock = session.query(Stock_obj).\
-            filter(Stock_data.Stock_obj_id == test_data_fixture).\
+        print('testign stock with ID:', test_data_fixture)
+        data_stock = session.query(Stock_obj). \
+            filter(Stock_data.Stock_obj_id == test_data_fixture). \
             one_or_none()
-        assert data_stock is not None #exists
+        assert data_stock is not None  # exists
         # session.query(Stock_obj).filter(id==test_data_fixture).delete()
         stock_ob = session.query(Stock_obj). \
             filter(Stock_obj.id == test_data_fixture).one_or_none()
-        print('deleting parent',stock_ob)
+        print('deleting parent', stock_ob)
         session.delete(stock_ob)
         session.commit()
         data_stock = session.query(Stock_data). \
@@ -100,7 +100,8 @@ def test_deleting_parent(client,test_data_fixture,myfixture,engine):
             filter(Stock_obj.id == test_data_fixture).one_or_none()
         assert stock_ob is None
 
-def test_acessing_values(client,test_data_fixture,myfixture,engine):
+
+def test_acessing_values(client, test_data_fixture, myfixture, engine):
     price = 666
     Session = sessionmaker(engine)
     with Session() as session:
@@ -108,7 +109,7 @@ def test_acessing_values(client,test_data_fixture,myfixture,engine):
         data_stock_obj = session.query(Stock_obj). \
             filter(Stock_obj.id == test_data_fixture). \
             one()
-        data_stock_obj.Stock_data.today_price = price #change value
+        data_stock_obj.Stock_data.today_price = price  # change value
         session.commit()
         data_stock_obj = session.query(Stock_obj). \
             filter(Stock_obj.id == test_data_fixture). \
@@ -116,11 +117,12 @@ def test_acessing_values(client,test_data_fixture,myfixture,engine):
         out = (data_stock_obj.Stock_data.today_price)
         assert out == price
 
-def test_deleting__just_user(client,test_delete_users_and_obj,engine):
+
+def test_deleting__just_user(client, test_delete_users_and_obj, engine):
     Session = sessionmaker(engine)
     with Session() as session:
         id = create_stock_obj('ADBE')
-        print('id is ===== ',id)
+        print('id is ===== ', id)
         assert id is not None
         id_user = create_user('Alex')
         assert id_user is not None
@@ -129,7 +131,7 @@ def test_deleting__just_user(client,test_delete_users_and_obj,engine):
             one_or_none()
         assert stock_obj is not None
         user_to_delete = session.query(Users). \
-            filter(Users.id== id_user). \
+            filter(Users.id == id_user). \
             one()
         session.delete(user_to_delete)
         session.commit()
@@ -140,8 +142,7 @@ def test_deleting__just_user(client,test_delete_users_and_obj,engine):
         stock_obj = session.query(Stock_obj). \
             filter(Stock_obj.id == id). \
             one_or_none()
-        assert stock_obj is not None #still persists
-
+        assert stock_obj is not None  # still persists
 
 #
 # def test_add_stock(client,engine):

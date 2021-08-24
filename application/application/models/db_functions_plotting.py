@@ -8,23 +8,22 @@ from bokeh.plotting import figure, output_file, show
 from .stocks import Indexes
 from math import pi
 from bokeh.models import Circle, ColumnDataSource, LinearAxis, Plot, Range1d, Title
-from sqlalchemy.orm import Session,sessionmaker,load_only
+from sqlalchemy.orm import Session, sessionmaker, load_only
 from sqlalchemy import create_engine
 from bokeh.models import LinearAxis, Range1d, Segment, Legend
 from os import getenv
 from sqlalchemy import create_engine
 
 
-
 def top_func(func):
-    def wrapper(ticker:str):
+    def wrapper(ticker: str):
         df = func(ticker)
 
         last = df.shape[0]
         duration = 120  # sessions
         before = last - duration
         # before = df.index[s]
-        df = df.truncate(before=before,)  # only - days!
+        df = df.truncate(before=before, )  # only - days!
         w = 12 * 60 * 60 * 1000  # half day in ms
         TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
         p = figure(tools=TOOLS, plot_height=350, sizing_mode="stretch_width",
@@ -44,7 +43,7 @@ def top_func(func):
         p.x_range.range_padding = 0.05
 
         p.xaxis.major_label_overrides = {
-            i: date.strftime('%b %d') for i, date in enumerate((df["date"]),start=before)
+            i: date.strftime('%b %d') for i, date in enumerate((df["date"]), start=before)
         }
         # print(df)
         # print('============', inc)
@@ -85,10 +84,12 @@ def top_func(func):
         # p.xaxis.axis_label = 'Date'
         # p.yaxis.axis_label = 'Price ($)'
         # return p
+
     return wrapper
 
+
 @top_func
-def get_data_for_plotting_wrap(ticker:str):
+def get_data_for_plotting_wrap(ticker: str):
     engine = create_engine(getenv("SQLALCHEMY_DATABASE_URI"))
     if type(ticker) is str:
         Session = sessionmaker(engine)

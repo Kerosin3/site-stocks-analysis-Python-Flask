@@ -1,17 +1,18 @@
-#https://addisonlynch.github.io/
-#iexcloud.io
+# https://addisonlynch.github.io/
+# iexcloud.io
 # https://addisonlynch.github.io/iexfinance/stable/usage.html?highlight=indexes
-from iexfinance.stocks import Stock,get_historical_data
+from iexfinance.stocks import Stock, get_historical_data
 from datetime import date
 from datetime import datetime, timedelta
 import os
-from iexfinance.utils.exceptions import  IEXQueryError
-from .errors import ServerExeption,NoSuchStock,SomethingBadHappened
+from iexfinance.utils.exceptions import IEXQueryError
+from .errors import ServerExeption, NoSuchStock, SomethingBadHappened
 from bokeh.plotting import figure, output_file, show
 from math import pi
 import pandas as pd
-from sqlalchemy.orm import Session,sessionmaker,load_only
+from sqlalchemy.orm import Session, sessionmaker, load_only
 from sqlalchemy import create_engine
+
 # from application.models.stocks import Indexes
 # from application.models.database import engine
 # from application.models.db_functions import engine
@@ -30,9 +31,8 @@ end = today
 start = datetime(2018, 1, 1)
 
 
-
 def check_if_exists(func):
-    def wrapper(*args,**kwargs):
+    def wrapper(*args, **kwargs):
         price = 0
         ticker = args[0]
         try:
@@ -55,13 +55,13 @@ def check_if_exists(func):
     return wrapper
 
 
-def get_data_historical(ticker:str):
+def get_data_historical(ticker: str):
     '''
     parsing volumes and prices
     :param ticker:
     :return:
     '''
-    assert (len(ticker) <= 5 ) and (len(ticker) > 1 )
+    assert (len(ticker) <= 5) and (len(ticker) > 1)
     try:
         df = get_historical_data(ticker, start, end,
                                  output_format='pandas')
@@ -70,27 +70,27 @@ def get_data_historical(ticker:str):
     # else:
     #     raise SomethingBadHappened
 
-    dff = df.loc[:,['close',"volume"]]
+    dff = df.loc[:, ['close', "volume"]]
     data_stocks = dff.to_dict()
-    prices,volume = data_stocks['close'],data_stocks['volume']
-    return prices,volume
+    prices, volume = data_stocks['close'], data_stocks['volume']
+    return prices, volume
 
 
-def get_lastday_data(ticker:str):
+def get_lastday_data(ticker: str):
     yesterday = date.today() + timedelta(days=-1)
     end = yesterday
     start = yesterday
     df = get_historical_data(ticker, start, end,
                              output_format='pandas')
-    dff = df.loc[:,['close',"volume"]]
+    dff = df.loc[:, ['close', "volume"]]
     data_stocks = dff.to_dict()
-    prices,volume = data_stocks['close'].values(),\
-                    data_stocks['volume'].values()
-    return *prices,*volume
+    prices, volume = data_stocks['close'].values(), \
+                     data_stocks['volume'].values()
+    return *prices, *volume
 
 
 @check_if_exists
-def get_today_price(index:Stock):
+def get_today_price(index: Stock):
     price = index.get_price().to_dict()
     ticker = list(price.keys())[0]
     price = price[ticker]
@@ -98,16 +98,16 @@ def get_today_price(index:Stock):
     return price
 
 
-def get_today_prices_several(indexex:list):
+def get_today_prices_several(indexex: list):
     stocks = Stock(indexex)
     prices = stocks.get_price().to_dict()
     out = {}
-    for stock,price in prices.items():
+    for stock, price in prices.items():
         out[stock] = price['price']
     return out
 
 
-def get_historical_for_graph(ticker:str):
+def get_historical_for_graph(ticker: str):
     yesterday = date.today() + timedelta(days=-1)
     end = yesterday
     start = datetime(2019, 1, 1)
@@ -122,7 +122,7 @@ def get_historical_for_graph(ticker:str):
     dec = df.open > df.close
     w = 12 * 60 * 60 * 1000  # half day in ms
     TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
-    p = figure(x_axis_type="datetime", tools=TOOLS,plot_height=300, plot_width=1400, title=ticker + " candlestick")
+    p = figure(x_axis_type="datetime", tools=TOOLS, plot_height=300, plot_width=1400, title=ticker + " candlestick")
     p.xaxis.major_label_orientation = pi / 4
     p.grid.grid_line_alpha = 0.3
     p.segment(df.date, df.high, df.date, df.low, color="black")
@@ -133,18 +133,15 @@ def get_historical_for_graph(ticker:str):
     # show(p)  # open a browse
 
 
-def get_data_for_plotting(ticker:str):
+def get_data_for_plotting(ticker: str):
     yesterday = date.today() + timedelta(days=-1)
     end = yesterday
     start = datetime(2019, 1, 1)
     df = get_historical_data(ticker, start, end,
-                            output_format='pandas')
+                             output_format='pandas')
     df.reset_index(inplace=True)
     df.rename(columns={'index': 'date'}, inplace=True)
     df = df.loc[:, ['date', 'open', 'close', "volume", 'high', 'low']]
     return df
 
 # from application.models.db_functions import get_plotting_data
-
-
-
