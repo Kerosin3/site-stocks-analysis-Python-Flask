@@ -44,7 +44,7 @@ from flask import current_app
 app = Flask(__name__)
 
 # app.config['SERVER_NAME'] = '0.0.0.0:5000'
-environ["FLASK_ENV"] = "development"
+# environ["FLASK_ENV"] = "development"
 environ["FLASK_DEBUG"] = "1"
 workmode = getenv("FLASK_ENV", 'development')
 if workmode == 'development':
