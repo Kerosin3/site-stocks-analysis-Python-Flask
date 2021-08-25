@@ -8,6 +8,7 @@ flask_app="app.py"
 flask_app_folder=$PWD/application/
 flask_app=$PWD/application/$flask_app
 echo $flask_app
+( cd $flask_app_folder && poetry install )
 if [ -e $flask_app ]
 then
   echo "file app exists"

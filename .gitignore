@@ -6,3 +6,4 @@ db-data
 gitlab-ci.yml
 .gitlab-ci.yml
 coverage_reports
+migrations
