@@ -29,6 +29,7 @@ from flask_login import (
     logout_user, login_required, UserMixin, current_user, LoginManager
 )
 import random
+from sqlalchemy import create_engine
 from flask_apscheduler import APScheduler
 from jobs import job1, job_pseupo_update, job_get_update_all_indexes
 from application.models.users import LoginForm, RegisterForm
@@ -73,6 +74,7 @@ app.register_blueprint(stocks_main_app)
 with app.app_context():
     db.init_app(app)
     migrate = Migrate(app, db)
+    # engine_test = create_engine(config.SQLALCHEMY_DATABASE_URI,pool_pre_ping=True) # try to check db online .. not working
 
 bcrypt = Bcrypt(app)
 # app.config['SESSION_COOKIE_SECURE'] = False
