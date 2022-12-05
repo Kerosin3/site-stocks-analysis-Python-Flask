@@ -1,3 +1,5 @@
+![alt text](https://flask.palletsprojects.com/en/2.2.x/_images/flask-logo.png)
+![alt text](https://www.python.org/static/img/python-logo@2x.png)
 # Проект сайта агрегатора котировок акций.
 
 1. За основу сайта взят фрейворк Flask.
